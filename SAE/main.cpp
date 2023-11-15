@@ -7,52 +7,48 @@ But : Jouer à la bataille navale
 #include <iostream>
 using namespace std;
 
+const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
+char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
+
 // Déclaration des sous-programmes
 /* void generePlateau(char tab[][], unsigned short int lgTab); */
+void afficherTableau();
 // But : Générer un plateau de jeu à 2 dimensions tab de taille lgTab
 
 int main(void)
 {
-    // VARIABLES
-    const unsigned short int NB_CASES = 11;                                                 // Taille du tableau horizontalement et verticalement
-    char plateauJeu[NB_CASES][NB_CASES];                                                    // Tableau contenant le plateau de jeu
-    int ligne;                                                                              // Numéro de la ligne courante
-    int colonne;                                                                            // Numéro de la colonne courante
-    const unsigned short int INDICE_CONVERSION_CHAR = 48;                                   // Indice pour convertir un int en char grace a la table ASCII                                                                      // Indice à mettre dans les index de colonnes
-    const char tabChar[NB_CASES] = {' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', ' '}; // Tableau de caractères index
+    afficherTableau();
+}
 
-    // Générer le plateau
-    for (ligne = 0; ligne < NB_CASES; ligne++)
+void afficherTableau()
+{
+    for (int i = 0; i <= NB_CASES + 1; i++) // LIGNES
     {
-        for (colonne = 0; colonne < NB_CASES; colonne++)
+        for (int j = 0; j <= NB_CASES + 1; j++) // COLLONES
         {
-            // Remplir les index horizontaux
-            if ((ligne == 0 || ligne == 10) && (colonne != 0 || colonne != 10))
+            if (i == 0 || i == NB_CASES + 1)
             {
-                plateauJeu[ligne][colonne] = tabChar[colonne];
+                if (j == 0 || j == NB_CASES + 1)
+                {
+                    cout << " ";
+                }
+                else
+                {
+                    cout << char('A' + (j - 1)) << " ";
+                }
             }
-            // Remplir les index verticaux
-            else if ((ligne != 0 || ligne != 10) && (colonne == 0 || colonne == 10))
-            {
-                plateauJeu[ligne][colonne] = char(ligne + INDICE_CONVERSION_CHAR);
-            }
-            // Remplir de cases vides
             else
             {
-                plateauJeu[ligne][colonne] = ' ';
+                if (j == 0 || j == NB_CASES + 1)
+                {
+                    cout << i;
+                }
+                else
+                {
+                    cout << plateauJeu[i][j] << " ";
+                }
             }
-        }
-    }
-
-    // Affichage du plateau
-    for (ligne = 0; ligne < NB_CASES; ligne++)
-    {
-        for (colonne = 0; colonne < NB_CASES; colonne++)
-        {
-            cout << plateauJeu[ligne][colonne] << " ";
         }
         cout << endl;
     }
-
-    return 0;
 }
