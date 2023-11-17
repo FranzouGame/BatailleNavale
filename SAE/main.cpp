@@ -6,7 +6,6 @@ But : Jouer à la bataille navale
 #include "game-tools.h"
 #include <iostream>
 #include <tuple>
-#include <string>
 using namespace std;
 
 const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
@@ -16,14 +15,14 @@ int tourJoueur = 0;
 tuple<int, int> bateauJoueur[2][4];
 
 // Déclaration des sous-programmes
-void afficherEnTete( );
-void afficherTableau();                 // A commenter
-void genererBateau();                   // A faire
-void nouveauTour();                     // A completer
-void tirJoueur(int ligne, int colonne); // A complter
-void verifBateauToucher();              // A faire
+void afficherEnTete();
+void afficherTableau();                         // A commenter
+void genererBateau();                           // A faire
+void nouveauTour();                             // A completer
+void tirJoueur(int ligne, int colonne);         // A complter
+int verifBateauToucher(int ligne, int colonne); // A faire
 
-// Déclaration des types 
+// Déclaration des types
 struct UneCoord
 {
     int x;
@@ -65,8 +64,8 @@ void afficherTableau()
                     cout << char('A' + (j - 1)) << " ";
                 }
             }
-            // Afficher les indices numérotés 
-            else 
+            // Afficher les indices numérotés
+            else
             {
                 // Afficher les chiffres
                 if (j == 0 || j == NB_CASES + 1)
@@ -92,15 +91,25 @@ void nouveauTour()
 {
     // Variables locales
     string action;
+    int ligne;
+    int colonne;
 
-    // Traitements 
+    // Traitements
     // Saisie de la cible du tir par l'utilisisateur
     cout << "Votre tir : ";
     cin >> action;
 
     // Conversion du retour utilisateur pour pouvoir placer le tir sur la grille
-    int ligne = (int)action[1] - 48;
-    int colonne = int(action[0]) - 64;
+    if ( int(action[0]) >= 97 && int(action[0]) < 105 )
+    {
+        colonne = int(action[0]) - 96;
+    }
+    else
+    {
+        colonne = int(action[0]) - 64;
+    }
+    
+    ligne = (int)action[1] - 48;
 
     // Vérification de la validité du tir
     if (action.length() == 2 && colonne > 0 && colonne < 10 && ligne > 0 && ligne < 10)
@@ -109,16 +118,16 @@ void nouveauTour()
     }
     else
     {
-        if ( (ligne < 65 || ligne > 73) && (colonne > 0 && colonne < 10))
+        if ((ligne < 10 || ligne > 1) && (colonne > 0 && colonne < 10))
         {
             cout << "### Erreur en Y ###" << endl;
             nouveauTour();
         }
-        else if ( colonne < 0 || colonne > 9 )
+        else if (colonne < 0 || colonne > 9)
         {
             cout << "### Erreur en X ###" << endl;
             nouveauTour();
-        }        
+        }
     }
 
     afficherTableau();
@@ -127,7 +136,9 @@ void nouveauTour()
 void tirJoueur(int ligne, int colonne)
 {
     int bateauToucher;
-    bateauToucher = verifBateauToucher(ligne, colonne);
+    bateauToucher = 0;
+    // bateauToucher = verifBateauToucher(ligne, colonne);
+    // bateauToucher = verifBateauToucher(ligne, colonne);
     // 0 = non, 1=joueur 1, 2=joueur2
 
     if (bateauToucher == 0)
@@ -144,7 +155,7 @@ void tirJoueur(int ligne, int colonne)
     }
 }
 
-int verifBateauToucher(int x, int y)
+int verifBateauToucher(int ligne, int colonne)
 {
-
+    return 0;
 }
