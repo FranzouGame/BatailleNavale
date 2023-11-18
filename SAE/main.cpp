@@ -8,39 +8,36 @@ But : Jouer à la bataille navale
 using namespace std;
 
 // Déclaration des types
-struct UneCoord
+struct Coord
 {
     int x;
     int y;
 };
 
-struct UnBateau
+struct Bateau
 {
-    UneCoord pos[4];
+    Coord pos[4];
 };
 
 const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
 char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
+
+const unsigned short int NB_BATEAU = 2;
+Bateau Bateaux[NB_BATEAU];
 
 int tourJoueur = 0;
 
 // Déclaration des sous-programmes
 void afficherEnTete();
 void afficherTableau();
-void genererBateau(UnBateau bateauUtiliser); // A faire
-void afficherBateau(UnBateau bateauAVoir);
-void nouveauTour(); // A completer
-void genererCoord(int &x, int &y);
-void getCoord(int ligne, int colonne); // A complter
-int verifBateauToucher(int x, int y);  // A faire
+void genererBateau(int indexBateau); // A faire
+void afficherBateau();
+void nouveauTour();                              // A completer
+void verifBateauToucher(int ligne, int colonne); // A complter
 
 int main(void)
 {
-    UnBateau bateauJoueur1;
-    UnBateau bateauJoueur2;
-
-    genererBateau(bateauJoueur1);
-    afficherBateau(bateauJoueur1);
+    genererBateau(0);
     afficherTableau();
     nouveauTour();
     cin >> tourJoueur;
@@ -50,6 +47,7 @@ int main(void)
 
 void afficherTableau()
 {
+    afficherBateau();
     cout << endl;
 
     for (int i = 0; i <= NB_CASES + 1; i++) // Parcours des différentes lignes
@@ -88,11 +86,20 @@ void afficherTableau()
     }
 }
 
-void genererBateau(UnBateau bateauUtiliser)
+void genererBateau(int indexBateau)
 {
-    int sens = random(1, 2); // 1 = Vertical, 2 = Horizontale, 3 = Diagonale
-    int X = random(1, 9);
-    int Y = random(1, 9);
+    if (NB_BATEAU <= indexBateau)
+    {
+        return;
+    }
+
+    int sens; // 1 = Vertical, 2 = Horizontale, 3 = Diagonale
+    int X;
+    int Y;
+
+    sens = random(1, 2);
+    X = random(1, 9);
+    Y = random(1, 9);
 
     // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
     if (plateauJeu[X][Y] == '\0')
@@ -100,54 +107,54 @@ void genererBateau(UnBateau bateauUtiliser)
         switch (sens)
         {
         case 1: // Vertical
-            if (X > 3 && X < 6)
+            if (X < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
                 for (int i = 0; i < 4; i++)
                 {
                     if (plateauJeu[X + i][Y] != '\0')
                     {
-                        genererBateau(bateauUtiliser); // Si une case est occupée, générer un nouveau bateau
+                        genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
                         return;
                     }
                 }
                 // Si toutes les cases sont libres, générer le bateau
                 for (int i = 0; i < 4; i++)
                 {
-                    bateauUtiliser.pos[i].x = X + i;
-                    bateauUtiliser.pos[i].y = Y;
-                    getCoord(bateauUtiliser.pos[i].x, bateauUtiliser.pos[i].y);
+                    Bateaux[indexBateau].pos[i].x = X + i;
+                    Bateaux[indexBateau].pos[i].y = Y;
                 }
+                genererBateau(indexBateau + 1);
             }
             else
             {
-                genererBateau(bateauUtiliser);
+                genererBateau(indexBateau);
             }
             break;
 
         case 2: // Horizontal
-            if (Y > 3 && Y < 6)
+            if (Y < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
                 for (int i = 0; i < 4; i++)
                 {
                     if (plateauJeu[X][Y + i] != '\0')
                     {
-                        genererBateau(bateauUtiliser); // Si une case est occupée, générer un nouveau bateau
+                        genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
                         return;
                     }
                 }
                 // Si toutes les cases sont libres, générer le bateau
                 for (int i = 0; i < 4; i++)
                 {
-                    bateauUtiliser.pos[i].x = X;
-                    bateauUtiliser.pos[i].y = Y + i;
-                    getCoord(bateauUtiliser.pos[i].x, bateauUtiliser.pos[i].y);
+                    Bateaux[indexBateau].pos[i].x = X;
+                    Bateaux[indexBateau].pos[i].y = Y + i;
                 }
+                genererBateau(indexBateau + 1);
             }
             else
             {
-                genererBateau(bateauUtiliser);
+                genererBateau(indexBateau);
             }
             break;
 
@@ -155,13 +162,21 @@ void genererBateau(UnBateau bateauUtiliser)
             break;
         }
     }
+    else
+    {
+        genererBateau(indexBateau);
+    }
 }
 
-void afficherBateau(UnBateau bateauAVoir)
+void afficherBateau()
 {
-    for (int i = 0; i < 4; i++)
+    for (const Bateau &bateau : Bateaux)
     {
-        cout << "(" << char(bateauAVoir.pos[i].y + 64) << bateauAVoir.pos[i].x << ") ";
+        for (const Coord &coord : bateau.pos)
+        {
+            cout << "(" << char(coord.y + 64) << "," << coord.x << ") ";
+        }
+        cout << endl;
     }
 }
 
@@ -182,7 +197,7 @@ void nouveauTour()
     // Vérification de la validité du tir
     if (action.length() == 2 && colonne > 0 && colonne < 10 && ligne > 0 && ligne < 10)
     {
-        getCoord(ligne, colonne);
+        verifBateauToucher(ligne, colonne);
     }
     else
     {
@@ -201,7 +216,7 @@ void nouveauTour()
     afficherTableau();
 }
 
-void getCoord(int ligne, int colonne)
+void verifBateauToucher(int ligne, int colonne)
 {
     int bateauToucher = 0;
     // bateauToucher = verifBateauToucher(ligne, colonne);
