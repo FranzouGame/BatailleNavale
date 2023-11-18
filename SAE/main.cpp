@@ -7,20 +7,6 @@ But : Jouer à la bataille navale
 #include "game-tools.h"
 using namespace std;
 
-const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
-char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
-
-int tourJoueur = 0;
-
-// Déclaration des sous-programmes
-void afficherEnTete();
-void afficherTableau(); // A commenter
-void genererBateau();   // A faire
-void nouveauTour();     // A completer
-void genererCoord(int &x, int &y);
-void getCoord(int ligne, int colonne); // A complter
-int verifBateauToucher(int x, int y);  // A faire
-
 // Déclaration des types
 struct UneCoord
 {
@@ -30,25 +16,42 @@ struct UneCoord
 
 struct UnBateau
 {
-    UneCoord pos1;
-    UneCoord pos2;
-    UneCoord pos3;
-    UneCoord pos4;
+    UneCoord pos[4];
 };
 
-UnBateau bateauJoueur1;
-UnBateau bateauJoueur2;
+const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
+char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
+
+int tourJoueur = 0;
+
+// Déclaration des sous-programmes
+void afficherEnTete();
+void afficherTableau();
+void genererBateau(UnBateau bateauUtiliser); // A faire
+void afficherBateau(UnBateau bateauAVoir);
+void nouveauTour(); // A completer
+void genererCoord(int &x, int &y);
+void getCoord(int ligne, int colonne); // A complter
+int verifBateauToucher(int x, int y);  // A faire
 
 int main(void)
 {
-    genererBateau();
+    UnBateau bateauJoueur1;
+    UnBateau bateauJoueur2;
+
+    genererBateau(bateauJoueur1);
+    afficherBateau(bateauJoueur1);
     afficherTableau();
     nouveauTour();
     cin >> tourJoueur;
+
+    return 0;
 }
 
 void afficherTableau()
 {
+    cout << endl;
+
     for (int i = 0; i <= NB_CASES + 1; i++) // Parcours des différentes lignes
     {
         for (int j = 0; j <= NB_CASES + 1; j++) // parcours des différentes colonnes
@@ -85,45 +88,80 @@ void afficherTableau()
     }
 }
 
-void genererBateau()
+void genererBateau(UnBateau bateauUtiliser)
 {
-    int sens = random(1, 2); // 1 = Verticale 2 = Horizental 3 = Diagonale
+    int sens = random(1, 2); // 1 = Vertical, 2 = Horizontale, 3 = Diagonale
     int X = random(1, 9);
     int Y = random(1, 9);
 
-    cout << sens << " " << X << " " << Y << endl;
-    switch (sens)
+    // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
+    if (plateauJeu[X][Y] == '\0')
     {
-    case 1:
-        if (X > 3 && X < 6)
+        switch (sens)
         {
-            getCoord(X, Y);
-            getCoord(X + 1, Y);
-            getCoord(X + 2, Y);
-            getCoord(X + 3, Y);
-        }
-        else
-        {
-            genererBateau();
-        }
-        break;
-    case 2:
-        if (Y > 3 && Y < 6)
-        {
-            getCoord(X, Y);
-            getCoord(X, Y + 1);
-            getCoord(X, Y + 2);
-            getCoord(X, Y + 3);
-        }
-        else
-        {
-            genererBateau();
-        }
-        break;
+        case 1: // Vertical
+            if (X > 3 && X < 6)
+            {
+                // Vérifier si les cases sont libres avant de générer le bateau
+                for (int i = 0; i < 4; i++)
+                {
+                    if (plateauJeu[X + i][Y] != '\0')
+                    {
+                        genererBateau(bateauUtiliser); // Si une case est occupée, générer un nouveau bateau
+                        return;
+                    }
+                }
+                // Si toutes les cases sont libres, générer le bateau
+                for (int i = 0; i < 4; i++)
+                {
+                    bateauUtiliser.pos[i].x = X + i;
+                    bateauUtiliser.pos[i].y = Y;
+                    getCoord(bateauUtiliser.pos[i].x, bateauUtiliser.pos[i].y);
+                }
+            }
+            else
+            {
+                genererBateau(bateauUtiliser);
+            }
+            break;
 
-    default:
-        cout << "Sex";
-        break;
+        case 2: // Horizontal
+            if (Y > 3 && Y < 6)
+            {
+                // Vérifier si les cases sont libres avant de générer le bateau
+                for (int i = 0; i < 4; i++)
+                {
+                    if (plateauJeu[X][Y + i] != '\0')
+                    {
+                        genererBateau(bateauUtiliser); // Si une case est occupée, générer un nouveau bateau
+                        return;
+                    }
+                }
+                // Si toutes les cases sont libres, générer le bateau
+                for (int i = 0; i < 4; i++)
+                {
+                    bateauUtiliser.pos[i].x = X;
+                    bateauUtiliser.pos[i].y = Y + i;
+                    getCoord(bateauUtiliser.pos[i].x, bateauUtiliser.pos[i].y);
+                }
+            }
+            else
+            {
+                genererBateau(bateauUtiliser);
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+}
+
+void afficherBateau(UnBateau bateauAVoir)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        cout << "(" << char(bateauAVoir.pos[i].y + 64) << bateauAVoir.pos[i].x << ") ";
     }
 }
 
@@ -181,8 +219,4 @@ void getCoord(int ligne, int colonne)
     {
         plateauJeu[ligne][colonne] = 'X';
     }
-}
-
-int verifBateauToucher(int x, int y)
-{
 }
