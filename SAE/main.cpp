@@ -38,6 +38,7 @@ string Joueur2;
 
 // Déclaration des sous-programmes
 void afficherTableau();
+void afficherEnTete();
 void genererBateau(int indexBateau); // Diago a faire
 void afficherBateau();
 void nouveauTour(); // A completer
@@ -59,6 +60,7 @@ int main(void)
     while (true)
     {
         effacer();
+        afficherEnTete();
         afficherTableau();
         nouveauTour();
         verifGagnant();
@@ -115,6 +117,28 @@ void afficherTableau()
             }
         }
         cout << endl;
+    }
+}
+
+void afficherEnTete()
+{
+    cout << "B A T A I L L E   N A V A L E" << endl
+         << endl;
+    cout << "Chaque joueur doit couler un bateau de 4 cases (vertical, horizontal ou diagonal)" << endl
+         << endl;
+    afficherBateau();
+    cout << endl
+         << endl;
+
+    if (tourJoueur == 0)
+    {
+        cout << "Joueur 1 = " << Joueur1 << endl
+             << endl;
+    }
+    else
+    {
+        cout << "Joueur 2 = " << Joueur2 << endl
+             << endl;
     }
 }
 
