@@ -267,23 +267,12 @@ void verifBateauToucher(int ligne, int colonne)
 
 void afficherBateau()
 {
-    int i = 0;
-    for (const Bateau &bateau : Bateaux)
+    for (int indiceBateau = 0; indiceBateau < NB_BATEAU; indiceBateau++)
     {
-        i++;
-        cout << "Bateau" << i;
-        if (i == 1)
+        cout << "Bateau " << (indiceBateau + 1) << " = ";
+        for (int coordBateau = 0; coordBateau < NB_CASEBATEAU; coordBateau++)
         {
-            cout << " (O) = ";
-        }
-        else
-        {
-            cout << " (X) = ";
-        }
-
-        for (const Coord &coord : bateau.pos)
-        {
-            cout << " (" << char(coord.y + 64) << "," << coord.x << ") ";
+            cout << " (" <<char(Bateaux[indiceBateau].pos[coordBateau].y + 64) << ","  << Bateaux[indiceBateau].pos[coordBateau].x  <<  ")";
         }
         cout << endl;
     }
@@ -341,15 +330,12 @@ void nouveauTour()
             }
         }
     }
-
+    verifGagnant();
     afficherTableau();
 }
 
 void verifGagnant()
 {
-    bool joueur1Gagne = true;
-    bool joueur2Gagne = true;
-
     for (int i = 0; i < NB_BATEAU; i++)
     {
         int toucheJoueur1 = 0;
@@ -369,23 +355,14 @@ void verifGagnant()
             }
         }
 
-        joueur1Gagne = joueur1Gagne && (toucheJoueur1 == NB_CASEBATEAU);
-        joueur2Gagne = joueur2Gagne && (toucheJoueur2 == NB_CASEBATEAU);
-
-        // Break if both players can't win anymore
-        if (!joueur1Gagne && !joueur2Gagne)
+        if (toucheJoueur1 == 4)
         {
-            break;
+            partieGagner = 1;
         }
-    }
-
-    if (joueur1Gagne)
-    {
-        partieGagner = 1;
-    }
-    else if (joueur2Gagne)
-    {
-        partieGagner = 2;
+        else if (toucheJoueur2 == 4)
+        {
+            partieGagner = 2;
+        }
     }
 }
 
