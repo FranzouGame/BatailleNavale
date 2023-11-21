@@ -12,13 +12,13 @@ const unsigned short int NB_CASEBATEAU = 4; // Longueur d'un bateau
 // Déclaration des types
 struct Coord
 {
-    int x = 0;
-    int y = 0;
+    int x = 0; // Abscisse de la coordonnée
+    int y = 0; // Ordonnée de la coordonnée
 };
 
 struct Bateau
 {
-    Coord pos[NB_CASEBATEAU];
+    Coord pos[NB_CASEBATEAU]; // Un bateau aura NB_CASEBATEAU coordonnées
 };
 
 const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
@@ -62,9 +62,11 @@ int main(void)
     cout << "Quel est le nom du joueur 2 : ";
     cin >> Joueur2;
 
-    genererBateau(0); // Generation des bateaux
+    // Initialisation de la partie
+    // Generation des bateaux
+    genererBateau(0);
 
-    // Boucle principale
+    // Jouer la partie
     while (true)
     {
         // Nettoyer le terminal entre les 2 tours
@@ -190,7 +192,7 @@ void genererBateau(int indexBateau)
         switch (sens)
         {
         // Cas dans lequel le bateau est vertical
-        case 1: 
+        case 1:
             if (X < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
@@ -210,9 +212,26 @@ void genererBateau(int indexBateau)
                 }
                 genererBateau(indexBateau + 1);
             }
-            else
+            else if (Y > 6)
             {
-                genererBateau(indexBateau);
+                Y = Y - (Y - 6);
+
+                // Vérifier si les cases sont libres avant de générer le bateau
+                for (int i = 0; i < NB_CASEBATEAU; i++)
+                {
+                    if (plateauJeu[X + i][Y] != '\0')
+                    {
+                        genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
+                        return;
+                    }
+                }
+                // Si toutes les cases sont libres, générer le bateau
+                for (int i = 0; i < NB_CASEBATEAU; i++)
+                {
+                    Bateaux[indexBateau].pos[i].x = X + i;
+                    Bateaux[indexBateau].pos[i].y = Y;
+                }
+                genererBateau(indexBateau + 1);
             }
             break;
 
@@ -306,31 +325,15 @@ void verifBateauToucher(int ligne, int colonne)
 
 void afficherBateau()
 {
-    // Variables locales
-    int i = 0;
-
-    // Traitements
-    // Parcourir les bateaux
-    for (const Bateau &bateau : Bateaux)
+    // Parcours des 2 bateaux du tableau Bateaux
+    for (int indiceBateau = 0; indiceBateau < NB_BATEAU; indiceBateau++)
     {
-        // Incrémentation du compteur
-        i++;
-
-        // Afficher le message de positions des bateaux et leur représentation dans la grille
-        cout << "Bateau" << i;
-        if (i == 1)
+        // Afficher l'en-tête de la ligne
+        cout << "Bateau " << (indiceBateau + 1) << " = ";
+        // Afficher les coordonnées de tous les points du bateau
+        for (int coordBateau = 0; coordBateau < NB_CASEBATEAU; coordBateau++)
         {
-            cout << " (O) = ";
-        }
-        else
-        {
-            cout << " (X) = ";
-        }
-
-        // Afficher les coordonnées de chaque bateau
-        for (const Coord &coord : bateau.pos)
-        {
-            cout << " (" << char(coord.y + 64) << "," << coord.x << ") ";
+            cout << " (" <<char(Bateaux[indiceBateau].pos[coordBateau].y + 64) << ","  << Bateaux[indiceBateau].pos[coordBateau].x  <<  ")";
         }
         cout << endl;
     }
@@ -401,6 +404,8 @@ void nouveauTour()
             }
         }
     }
+    // Vérifier si on a un gagnant
+    verifGagnant();
     // Afficher la grille
     afficherTableau();
 }
@@ -408,54 +413,40 @@ void nouveauTour()
 void verifGagnant()
 {
     // Variables locales
-    bool joueur1Gagne = true; // Booléen représentant le résultat du joueur 1
-    bool joueur2Gagne = true; // Booléen représentant le résultat du joueur 2
-    int toucheJoueur1 = 0;    // Nombre de cases touchées du bateau 1
-    int toucheJoueur2 = 0;    // Nombre de cases touchées du bateau 2
+    int toucheJoueur1 = 0; // Nombre de tirs touchant le bateau 1
+    int toucheJoueur2 = 0; // Nombre de tirs touchant le bateau 2
 
-    // Traitements
-    // Parcours du tableau pour vérifier le nombre de cases touchées par bateaux
-    for (int i = 0; i < NB_BATEAU; i++) // Parcourir les 2 bateaux
+    // Parcours des 2 bateaux
+    for (int i = 0; i < NB_BATEAU; i++)
     {
-        for (int j = 0; j < NB_CASEBATEAU; j++) // Parcourir les cases des bateaux
+        // Parcours des coordonnées des 2 bateaux
+        for (int j = 0; j < NB_CASEBATEAU; j++)
         {
-            // Récupérer les coordonnées de chaque position des bateaux
+            // Récupérer la coordonnée du bateau en cours
             Coord coord = Bateaux[i].pos[j];
 
-            // Vérifier si la coordonnée du bateau dans le plateau est complétée
-            if (plateauJeu[coord.x][coord.y] == 'O') // Bateau 1
+            // Vérifier si le nombre de cases touchées du bateau 1
+            if (plateauJeu[coord.x][coord.y] == 'O')
             {
-                // Mettre à jour le compteur de case touchées du bateau 1
                 toucheJoueur1++;
             }
-            else if (plateauJeu[coord.x][coord.y] == 'X') // Bateau 2
+            // Vérifier si le nombre de cases touchées du bateau 2
+            else if (plateauJeu[coord.x][coord.y] == 'X')
             {
-                // Mettre à jour le compteur de case touchées du bateau 2
                 toucheJoueur2++;
             }
         }
 
-        // Mise à jour du gagnant
-        joueur1Gagne = joueur1Gagne && (toucheJoueur1 == NB_CASEBATEAU); // On vérifie si le bateau 1 est touché autant de fois qu'il est long
-        joueur2Gagne = joueur2Gagne && (toucheJoueur2 == NB_CASEBATEAU); // On vérifie si le bateau 2 est touché autant de fois qu'il est long
-
-        // Sortir de la boucle si aucun des joueurs n'a gagné
-        if (!joueur1Gagne && !joueur2Gagne)
+        // Vérifier si le bateau 1 est coulé entièrement 
+        if (toucheJoueur1 == 4)
         {
-            break;
+            partieGagner = 1;
         }
-    }
-
-    // Vérifier si un joueur a gagné
-    if (joueur1Gagne)
-    {
-        // Mettre à jour le gagnant
-        partieGagner = 1;
-    }
-    else if (joueur2Gagne)
-    {
-        // Mettre à jour le gagnant
-        partieGagner = 2;
+        // Vérifier si le bateau 2 est coulé entièrement 
+        else if (toucheJoueur2 == 4)
+        {
+            partieGagner = 2;
+        }
     }
 }
 
