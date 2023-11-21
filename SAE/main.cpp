@@ -9,6 +9,9 @@ using namespace std;
 
 const unsigned short int NB_CASEBATEAU = 4; // Longueur d'un bateau
 
+// Type énuméré direction
+enum UneDirection  {Horizontale, Verticale, Diagonale};
+
 // Déclaration des types
 struct Coord
 {
@@ -177,22 +180,39 @@ void genererBateau(int indexBateau)
         return;
     }
 
-    int sens; // 1 = Vertical, 2 = Horizontale, 3 = Diagonale
-    int X;    // Position horizontable dans le tableau
-    int Y;    // Position verticale dans le tableau
+    
+
+    int sens;             // 1 = Vertical, 2 = Horizontale, 3 = Diagonale
+    int X;                // Position horizontable dans le tableau
+    int Y;                // Position verticale dans le tableau
+    UneDirection dirElue; // Direction choisie aléatoirement
 
     // Génération des indices de la première case du bateau, et du sens de celui-ci
     sens = random(1, 2);
     X = random(1, 9);
     Y = random(1, 9);
 
+    // Assignation de la direction
+    switch (sens)
+    {
+    case 1:
+        dirElue = Verticale;
+        break;
+    case 2:
+        dirElue = Horizontale;
+        break;
+    default:
+        dirElue = Diagonale;
+        break;
+    }
+
     // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
     if (plateauJeu[Y][X] == '\0')
     {
-        switch (sens)
+        switch (dirElue)
         {
         // Cas dans lequel le bateau est vertical
-        case 1:
+        case Verticale:
             if (X < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
@@ -235,7 +255,7 @@ void genererBateau(int indexBateau)
             }
             break;
 
-        case 2: // Horizontal
+        case Horizontale: // Horizontal
             if (Y < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
@@ -262,6 +282,67 @@ void genererBateau(int indexBateau)
             break;
 
         default:
+            if ((X + 3 < 10 && Y + 3 < 10) && (plateauJeu[X+3][Y+3] != ' ' ))
+            {
+                // Vérifier si les cases intermédiaires sont vides
+                if ((plateauJeu[X+2][Y+2] != ' ' ))
+                {
+                    if ((plateauJeu[X+1][Y+1] != ' ' ))
+                    {
+                        for ( int i = 0 ; i < NB_CASEBATEAU ; i++ )
+                        {
+                            Bateaux[indexBateau].pos[i].x = X + i;
+                            Bateaux[indexBateau].pos[i].y = Y + i;
+                        }
+                    }
+                }
+            }
+            else if ((X + 3 < 10 && Y - 3 > 0) && (plateauJeu[X+3][Y-3] != ' ' ))
+            {
+                // Vérifier si les cases intermédiaires sont vides
+                if ((plateauJeu[X+2][Y-2] != ' ' ))
+                {
+                    if ((plateauJeu[X+1][Y-1] != ' ' ))
+                    {
+                        for ( int i = 0 ; i < NB_CASEBATEAU ; i++ )
+                        {
+                            Bateaux[indexBateau].pos[i].x = X + i;
+                            Bateaux[indexBateau].pos[i].y = Y - i;
+                        }
+                    }
+                }
+            }
+            else if ((X - 3 > 0 && Y - 3 > 0) && (plateauJeu[X-3][Y-3] != ' ' ))
+            {
+                // Vérifier si les cases intermédiaires sont vides
+                if ((plateauJeu[X-2][Y-2] != ' ' ))
+                {
+                    if ((plateauJeu[X-1][Y-1] != ' ' ))
+                    {
+                        for ( int i = 0 ; i < NB_CASEBATEAU ; i++ )
+                        {
+                            Bateaux[indexBateau].pos[i].x = X - i;
+                            Bateaux[indexBateau].pos[i].y = Y - i;
+                        }
+                    }
+                }
+            }
+            else if ((X - 3 > 0 && Y + 3 < 10) && (plateauJeu[X-3][Y+3] != ' ' ))
+            {
+                // Vérifier si les cases intermédiaires sont vides
+                if ((plateauJeu[X-2][Y+2] != ' ' ))
+                {
+                    if ((plateauJeu[X-1][Y+1] != ' ' ))
+                    {
+                        for ( int i = 0 ; i < NB_CASEBATEAU ; i++ )
+                        {
+                            Bateaux[indexBateau].pos[i].x = X - i;
+                            Bateaux[indexBateau].pos[i].y = Y + i;
+                        }
+                    }
+                }
+            }
+
             break;
         }
     }
@@ -333,7 +414,7 @@ void afficherBateau()
         // Afficher les coordonnées de tous les points du bateau
         for (int coordBateau = 0; coordBateau < NB_CASEBATEAU; coordBateau++)
         {
-            cout << " (" <<char(Bateaux[indiceBateau].pos[coordBateau].y + 64) << ","  << Bateaux[indiceBateau].pos[coordBateau].x  <<  ")";
+            cout << " (" << char(Bateaux[indiceBateau].pos[coordBateau].y + 64) << "," << Bateaux[indiceBateau].pos[coordBateau].x << ")";
         }
         cout << endl;
     }
@@ -437,12 +518,12 @@ void verifGagnant()
             }
         }
 
-        // Vérifier si le bateau 1 est coulé entièrement 
+        // Vérifier si le bateau 1 est coulé entièrement
         if (toucheJoueur1 == 4)
         {
             partieGagner = 1;
         }
-        // Vérifier si le bateau 2 est coulé entièrement 
+        // Vérifier si le bateau 2 est coulé entièrement
         else if (toucheJoueur2 == 4)
         {
             partieGagner = 2;
