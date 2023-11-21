@@ -41,7 +41,7 @@ void afficherTableau();
 // But : Afficher le tableau de jeu
 void afficherEnTete();
 // But : Afficher l'en-tête lors d'un tir
-void genererBateau(int indexBateau); // Diago a faire
+void genererBateau(int indexBateau); // Diago a faire, peut être changer la génération des 2 autres pour opti
 // But : Générer les bateaux nécessaires pour la partie
 void afficherBateau();
 // But : Afficher les coordonnées des bateaux à l'écran
@@ -189,7 +189,8 @@ void genererBateau(int indexBateau)
     {
         switch (sens)
         {
-        case 1: // Vertical
+        // Cas dans lequel le bateau est vertical
+        case 1: 
             if (X < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
@@ -253,18 +254,24 @@ void genererBateau(int indexBateau)
 
 void verifBateauToucher(int ligne, int colonne)
 {
+    // Variables Locales
     int bateauToucher = 0; // 0 = non, 1 = joueur 1, 2 = joueur2
 
+    // Parcourir les bateaux
     for (int i = 0; i < NB_BATEAU; i++)
     {
-        for (int j = 0; j < 4; j++)
+        // Parcourir les coordonnées de chaque bateau
+        for (int j = 0; j < NB_CASEBATEAU; j++)
         {
+            // Vérifier si le tir du joueur touche un bateau
             if (Bateaux[i].pos[j].x == ligne && Bateaux[i].pos[j].y == colonne)
             {
+                // Vérifier si le bateau touché est le bateau 1
                 if (i == 0)
                 {
                     bateauToucher = 1;
                 }
+                // Vérifier si le bateau touché est le bateau 2
                 else
                 {
                     bateauToucher = 2;
@@ -272,20 +279,25 @@ void verifBateauToucher(int ligne, int colonne)
                 break;
             }
         }
+        // Sortir de la boucle si le bateau est touché avant la fin de celle ci
         if (bateauToucher == 1 || bateauToucher == 2)
         {
             break;
         }
     }
 
+    // Mettre à jour la grille en fonction du tir du joueur
+    // Afficher un point si le joueur tire dans l'eau
     if (bateauToucher == 0)
     {
         plateauJeu[ligne][colonne] = '.';
     }
+    // Afficher un O si le joueur touche le bateau 1
     else if (bateauToucher == 1)
     {
         plateauJeu[ligne][colonne] = 'O';
     }
+    // Afficher un X si le joueur touche le bateau 2
     else if (bateauToucher == 2)
     {
         plateauJeu[ligne][colonne] = 'X';
@@ -304,7 +316,7 @@ void afficherBateau()
         // Incrémentation du compteur
         i++;
 
-        // Afficher le message de positions des bateaux et leur représenttion dans la grille
+        // Afficher le message de positions des bateaux et leur représentation dans la grille
         cout << "Bateau" << i;
         if (i == 1)
         {
