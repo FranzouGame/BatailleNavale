@@ -17,6 +17,16 @@ enum UneDirection
     Diagonale
 };
 
+// Type énuméré servant pour gérer l'état de la partie
+enum EtatsPossibles
+{
+    enCours,
+    victoireJoueur1,
+    victoireJoueur2,
+    abandonJoueur1,
+    abandonJoueur2
+};
+
 // Déclaration des types
 struct Coord
 {
@@ -35,19 +45,15 @@ char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
 const unsigned short int NB_BATEAU = 2; // Nombre de bateaux pris en compte
 Bateau Bateaux[NB_BATEAU];              // Tableau de Bateaux contenant les NB_BATEAUX de bateaux
 
-int tourJoueur = 0;   // Variable stockant à qui est le tour
-int partieGagner = 0; // 1 =  Joueur  1 gagne, 2 = Joueur 2 gagne, 3 = Joueur 1 abandonne, 4 = Joueur 2 abandonne
-int tirjoueur1 = 0;   // Stockage du nombre du tir du joueur 1
-int tirjoueur2 = 0;   // Stockage du nombre de tirs du joeuur 2
-
-string action;  // Stockage du tir du joueur, ou de son abandon
-string Joueur1; // Nom du joueur 1
-string Joueur2; // Nom du joueur 2
+int tourJoueur = 0;        // Variable stockant à qui est le tour
+EtatsPossibles etatPartie; // Décrit l'état de la partie
+int nbTirsJoueurs1 = 0;    // Stockage du nombre du tir du joueur 1
+int nbTirsJoueur2 = 0;     // Stockage du nombre de tirs du joeuur 2
 
 // Déclaration des sous-programmes
 void afficherTableau();
 // But : Afficher le tableau de jeu
-void afficherEnTete();
+void afficherEnTete(string pseudo1, string pseudo2);
 // But : Afficher l'en-tête lors d'un tir
 void genererBateau(int indexBateau); // Diago a faire, peut être changer la génération des 2 autres pour opti
 // But : Générer les bateaux nécessaires pour la partie
@@ -59,19 +65,23 @@ void verifBateauToucher(int ligne, int colonne);
 // But : Vérifier si le tir du joueur touche un bateau ou s'il tire dans l'eau
 void verifGagnant();
 // But : Vérifier si un des joueurs gagne ou si la partie continue
-void afficherResultat();
+void afficherResultat(string pseudo1, string pseudo2);
 // But : Afficher le résultat de la partie
 
 int main(void)
 {
+    // Variables locales
+    string nomJoueur1; // Nom du joueur 1
+    string nomJoueur2; // Nom du joueur 2
+
     // Saisie du nom des joueurs
     cout << "Quel est le nom du joueur 1 : ";
-    cin >> Joueur1;
+    cin >> nomJoueur1;
     cout << "Quel est le nom du joueur 2 : ";
-    cin >> Joueur2;
+    cin >> nomJoueur2;
 
     // Initialisation de la partie
-    // Generation des bateaux
+    // Génération des bateaux
     genererBateau(0);
 
     // Jouer la partie
@@ -81,7 +91,7 @@ int main(void)
         effacer();
 
         // Afficher les informations pour les joueurs
-        afficherEnTete();
+        afficherEnTete(nomJoueur1, nomJoueur2);
 
         // Afficher la grille avant le tir du joueur
         afficherTableau();
@@ -96,9 +106,9 @@ int main(void)
         tourJoueur = (tourJoueur + 1) % 2;
 
         // On vérifie si la partie est terminée, par abandon ou victoire d'un des joueurs
-        if (partieGagner != 0)
+        if (!(etatPartie == enCours))
         {
-            afficherResultat();
+            afficherResultat(nomJoueur1, nomJoueur2);
             break;
         }
     }
@@ -149,7 +159,7 @@ void afficherTableau()
     }
 }
 
-void afficherEnTete()
+void afficherEnTete(string pseudo1, string pseudo2)
 {
     // Afficher le nom du jeu
     cout << "B A T A I L L E   N A V A L E" << endl
@@ -166,13 +176,13 @@ void afficherEnTete()
     if (tourJoueur == 0)
     {
         // Afficher le nom du joueur 1
-        cout << "Joueur 1 = " << Joueur1 << endl
+        cout << "Joueur 1 = " << pseudo1 << endl
              << endl;
     }
     else
     {
         // Afficher le nom du joueur 2
-        cout << "Joueur 2 = " << Joueur2 << endl
+        cout << "Joueur 2 = " << pseudo2 << endl
              << endl;
     }
 }
@@ -258,7 +268,7 @@ void genererBateau(int indexBateau)
             }
             break;
 
-        case Horizontale: // Horizontal
+        case Horizontale: 
             if (Y < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
@@ -447,6 +457,9 @@ void afficherBateau()
 
 void nouveauTour()
 {
+    // Variables locales
+    string action; // Stockage du tir du joueur, ou de son abandon
+
     // Traitements
     // Saisie de la cible du tir par l'utilisisateur
     cout << "Votre tir (ex. A3) ou abandonner (@@) ? ";
@@ -458,12 +471,12 @@ void nouveauTour()
         // Vérifier si le joueur 1 abandonne
         if (tourJoueur == 0)
         {
-            partieGagner = 3;
+            etatPartie = abandonJoueur1;
         }
         // Vérifier si le joueur 2 abandonne
         else
         {
-            partieGagner = 4;
+            etatPartie = abandonJoueur2;
         }
     }
     // Si le joueur n'abndonne pas, mettre à jour son nombre de tirs
@@ -472,12 +485,12 @@ void nouveauTour()
         // Mettre à jour le nombre de tirs du joueur 1
         if (tourJoueur == 0)
         {
-            tirjoueur1++;
+            nbTirsJoueurs1++;
         }
         // Mettre à jour le nombre de tirs du joueur 2
         else
         {
-            tirjoueur2++;
+            nbTirsJoueur2++;
         }
 
         // Conversion du retour utilisateur pour pouvoir placer le tir sur la grille
@@ -546,41 +559,41 @@ void verifGagnant()
         // Vérifier si le bateau 1 est coulé entièrement
         if (toucheJoueur1 == 4)
         {
-            partieGagner = 1;
+            etatPartie = victoireJoueur1;
         }
         // Vérifier si le bateau 2 est coulé entièrement
         else if (toucheJoueur2 == 4)
         {
-            partieGagner = 2;
+            etatPartie = victoireJoueur2;
         }
     }
 }
 
-void afficherResultat()
+void afficherResultat(string pseudo1, string pseudo2)
 {
     // Vérifier qui a gagné
-    if (partieGagner == 1)
+    if (etatPartie == victoireJoueur1)
     {
         // Afficher le message de victoire du joueur 1
-        cout << "### Joueur 1 " << Joueur1 << " : GAGNE en " << tirjoueur1 << " tirs ###" << endl;
-        cout << "### Joueur 2 " << Joueur2 << " : PERD ###" << endl;
+        cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueurs1 << " tirs ###" << endl;
+        cout << "### Joueur 2 " << pseudo2 << " : PERD ###" << endl;
     }
-    else if (partieGagner == 2)
+    else if (etatPartie == victoireJoueur2)
     {
         // Afficher le message de victoire du joueur 2
-        cout << "### Joueur 1 " << Joueur1 << " : PERD ###" << endl;
-        cout << "### Joueur 2 " << Joueur2 << " : GAGNE en " << tirjoueur2 << " tirs ###" << endl;
+        cout << "### Joueur 1 " << pseudo1 << " : PERD ###" << endl;
+        cout << "### Joueur 2 " << pseudo2 << " : GAGNE en " << nbTirsJoueur2 << " tirs ###" << endl;
     }
-    else if (partieGagner == 3)
+    else if (etatPartie == abandonJoueur1)
     {
         // Afficher le message d'abandon du joueur 1
-        cout << "### Joueur 1 " << Joueur1 << " : ABANDON ###" << endl;
-        cout << "### Joueur 2 " << Joueur2 << " : GAGNE en " << tirjoueur2 << " tirs ###" << endl;
+        cout << "### Joueur 1 " << pseudo1 << " : ABANDON ###" << endl;
+        cout << "### Joueur 2 " << pseudo2 << " : GAGNE en " << nbTirsJoueur2 << " tirs ###" << endl;
     }
-    else if (partieGagner == 4)
+    else if (etatPartie == abandonJoueur2)
     {
         // Affficher le message d'abandon du joueur 2
-        cout << "### Joueur 1 " << Joueur1 << " : GAGNE en " << tirjoueur1 << " tirs ###" << endl;
-        cout << "### Joueur 1 " << Joueur2 << " : ABANDON ###" << endl;
+        cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueurs1 << " tirs ###" << endl;
+        cout << "### Joueur 1 " << pseudo2 << " : ABANDON ###" << endl;
     }
 }
