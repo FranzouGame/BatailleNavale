@@ -195,18 +195,18 @@ void genererBateau(int indexBateau)
         return;
     }
 
-    int sens;             // 1 = Vertical, 2 = Horizontale, 3 = Diagonale
+    int indiceDirection;  // Indice permettant de générer la direction dui bateau
     int X;                // Position horizontable dans le tableau
     int Y;                // Position verticale dans le tableau
     UneDirection dirElue; // Direction choisie aléatoirement
 
     // Génération des indices de la première case du bateau, et du sens de celui-ci
-    sens = random(1, 3);
+    indiceDirection = random(1, 3);
     X = random(1, 9);
     Y = random(1, 9);
 
     // Assignation de la direction
-    switch (sens)
+    switch (indiceDirection)
     {
     case 1:
         dirElue = Verticale;
@@ -226,72 +226,50 @@ void genererBateau(int indexBateau)
         {
         // Cas dans lequel le bateau est vertical
         case Verticale:
-            if (X < 6)
+            if (X > 6)
             {
-                // Vérifier si les cases sont libres avant de générer le bateau
-                for (int i = 0; i < NB_CASEBATEAU; i++)
-                {
-                    if (plateauJeu[X + i][Y] == '\0')
-                    {
-                        genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
-                        return;
-                    }
-                }
-                // Si toutes les cases sont libres, générer le bateau
-                for (int i = 0; i < NB_CASEBATEAU; i++)
-                {
-                    Bateaux[indexBateau].pos[i].x = X + i;
-                    Bateaux[indexBateau].pos[i].y = Y;
-                }
-                genererBateau(indexBateau + 1);
+                // Convertir Y au besoin
+                X = X - (X - 6);
             }
-            else if (Y > 6)
+            // Vérifier si les cases sont libres avant de générer le bateau
+            for (int i = 0; i < NB_CASEBATEAU; i++)
             {
-                Y = Y - (Y - 6);
-
-                // Vérifier si les cases sont libres avant de générer le bateau
-                for (int i = 0; i < NB_CASEBATEAU; i++)
+                if (plateauJeu[X + i][Y] != '\0')
                 {
-                    if (plateauJeu[X + i][Y] != '\0')
-                    {
-                        genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
-                        return;
-                    }
+                    genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
+                    return;
                 }
-                // Si toutes les cases sont libres, générer le bateau
-                for (int i = 0; i < NB_CASEBATEAU; i++)
-                {
-                    Bateaux[indexBateau].pos[i].x = X + i;
-                    Bateaux[indexBateau].pos[i].y = Y;
-                }
-                genererBateau(indexBateau + 1);
             }
+            // Si toutes les cases sont libres, générer le bateau
+            for (int i = 0; i < NB_CASEBATEAU; i++)
+            {
+                Bateaux[indexBateau].pos[i].x = X + i;
+                Bateaux[indexBateau].pos[i].y = Y;
+            }
+            genererBateau(indexBateau + 1);
             break;
 
         case Horizontale:
-            if (Y < 6)
+            if (Y > 6)
             {
-                // Vérifier si les cases sont libres avant de générer le bateau
-                for (int i = 0; i < NB_CASEBATEAU; i++)
-                {
-                    if (plateauJeu[X][Y + i] != '\0')
-                    {
-                        genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
-                        return;
-                    }
-                }
-                // Si toutes les cases sont libres, générer le bateau
-                for (int i = 0; i < NB_CASEBATEAU; i++)
-                {
-                    Bateaux[indexBateau].pos[i].x = X;
-                    Bateaux[indexBateau].pos[i].y = Y + i;
-                }
-                genererBateau(indexBateau + 1);
+                Y = Y - (Y - 6);
             }
-            else
+            // Vérifier si les cases sont libres avant de générer le bateau
+            for (int i = 0; i < NB_CASEBATEAU; i++)
             {
-                genererBateau(indexBateau);
+                if (plateauJeu[X][Y + i] != '\0')
+                {
+                    genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
+                    return;
+                }
             }
+            // Si toutes les cases sont libres, générer le bateau
+            for (int i = 0; i < NB_CASEBATEAU; i++)
+            {
+                Bateaux[indexBateau].pos[i].x = X;
+                Bateaux[indexBateau].pos[i].y = Y + i;
+            }
+            genererBateau(indexBateau + 1);
             break;
 
         default:
@@ -313,7 +291,7 @@ void genererBateau(int indexBateau)
                     }
                 }
             }
-            else if ((X + 3 > 0 && Y + 3 < 10) && plateauJeu[X + 3][Y + 3] == '\0') // Génération vers en bas à droite
+            else if ((X + 3 < 10 && Y + 3 < 10) && plateauJeu[X + 3][Y + 3] == '\0') // Génération vers en bas à droite
             {
                 // Vérifier que les cases comprises entre la première et la dernière soient vides
                 if (plateauJeu[X + 2][Y + 2] == '\0')
