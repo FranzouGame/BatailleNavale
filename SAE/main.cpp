@@ -220,7 +220,7 @@ void genererBateau(int indexBateau)
     }
 
     // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
-    if (plateauJeu[Y][X] != ' ')
+    if (plateauJeu[Y][X] == '\0')
     {
         switch (dirElue)
         {
@@ -231,7 +231,7 @@ void genererBateau(int indexBateau)
                 // Vérifier si les cases sont libres avant de générer le bateau
                 for (int i = 0; i < NB_CASEBATEAU; i++)
                 {
-                    if (plateauJeu[X + i][Y] != '\0')
+                    if (plateauJeu[X + i][Y] == '\0')
                     {
                         genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
                         return;
@@ -268,7 +268,7 @@ void genererBateau(int indexBateau)
             }
             break;
 
-        case Horizontale: 
+        case Horizontale:
             if (Y < 6)
             {
                 // Vérifier si les cases sont libres avant de générer le bateau
@@ -296,16 +296,14 @@ void genererBateau(int indexBateau)
 
         default:
             // Vérifier la disponibilité de la potentielle dernière case de la génération
-            if ((X - 3 > 0 && Y + 3 < 10) && plateauJeu[Y + 3][X - 3] != ' ') // Génération vers en haut à droite
+            if ((X - 3 > 0 && Y + 3 < 10) && plateauJeu[X - 3][Y + 3] == '\0') // Génération vers en haut à droite
             {
                 // Vérifier que les cases comprises entre la première et la dernière soient vides
-                if (plateauJeu[Y + 2][X - 2] != ' ')
+                if (plateauJeu[X - 2][Y + 2] == '\0')
                 {
-                    if (plateauJeu[Y + 1][X - 1] != ' ')
+                    if (plateauJeu[X - 1][Y + 1] == '\0')
                     {
-                        Bateaux[indexBateau].pos[0].x = X;
-                        Bateaux[indexBateau].pos[0].y = Y;
-                        for (int i = 1; i < NB_CASEBATEAU; i++)
+                        for (int i = 0; i < NB_CASEBATEAU; i++)
                         {
                             Bateaux[indexBateau].pos[i].x = X - i;
                             Bateaux[indexBateau].pos[i].y = Y + i;
@@ -315,16 +313,14 @@ void genererBateau(int indexBateau)
                     }
                 }
             }
-            else if ((X + 3 > 0 && Y + 3 < 10) && plateauJeu[Y + 3][X + 3] != ' ') // Génération vers en bas à droite
+            else if ((X + 3 > 0 && Y + 3 < 10) && plateauJeu[X + 3][Y + 3] == '\0') // Génération vers en bas à droite
             {
                 // Vérifier que les cases comprises entre la première et la dernière soient vides
-                if (plateauJeu[Y + 2][X + 2] != ' ')
+                if (plateauJeu[X + 2][Y + 2] == '\0')
                 {
-                    if (plateauJeu[Y + 1][X + 1] != ' ')
+                    if (plateauJeu[X + 1][Y + 1] == '\0')
                     {
-                        Bateaux[indexBateau].pos[0].x = X;
-                        Bateaux[indexBateau].pos[0].y = Y;
-                        for (int i = 1; i < NB_CASEBATEAU; i++)
+                        for (int i = 0; i < NB_CASEBATEAU; i++)
                         {
                             Bateaux[indexBateau].pos[i].x = X + i;
                             Bateaux[indexBateau].pos[i].y = Y + i;
@@ -334,17 +330,15 @@ void genererBateau(int indexBateau)
                     }
                 }
             }
-            else if ((X + 3 > 0 && Y - 3 < 10) && plateauJeu[Y - 3][X + 3] != ' ') // Génération vers en bas à gauche
+            else if ((X + 3 < 10 && Y - 3 > 0) && plateauJeu[X + 3][Y - 3] == '\0') // Génération vers en bas à gauche
             {
                 // Vérifier que les cases comprises entre la première et la dernière soient vides
-                if (plateauJeu[Y - 2][X + 2] != ' ')
+                if (plateauJeu[X + 2][Y - 2] == '\0')
                 {
-                    if (plateauJeu[Y - 1][X + 1] != ' ')
+                    if (plateauJeu[X + 1][Y - 1] == '\0')
                     {
-                        Bateaux[indexBateau].pos[0].x = X;
-                        Bateaux[indexBateau].pos[0].y = Y;
                         // Remplir le tableau de bateaux
-                        for (int i = 1; i < NB_CASEBATEAU; i++)
+                        for (int i = 0; i < NB_CASEBATEAU; i++)
                         {
                             Bateaux[indexBateau].pos[i].x = X + i;
                             Bateaux[indexBateau].pos[i].y = Y - i;
@@ -354,17 +348,15 @@ void genererBateau(int indexBateau)
                     }
                 }
             }
-            else if ((X - 3 > 0 && Y - 3 < 10) && plateauJeu[Y - 3][X - 3] != ' ') // Génération vers en haut en gauche
+            else if ((X - 3 > 0 && Y - 3 > 0) && plateauJeu[X - 3][Y - 3] == '\0') // Génération vers en haut en gauche
             {
                 // Vérifier que les cases comprises entre la première et la dernière soient vides
-                if (plateauJeu[Y - 2][X - 2] != ' ')
+                if (plateauJeu[X - 2][Y - 2] == '\0')
                 {
-                    if (plateauJeu[Y - 1][X - 1] != ' ')
+                    if (plateauJeu[X - 1][Y - 1] == '\0')
                     {
-                        Bateaux[indexBateau].pos[0].x = X;
-                        Bateaux[indexBateau].pos[0].y = Y;
                         // Remplir Le tableau des bateaux
-                        for (int i = 1; i < NB_CASEBATEAU; i++)
+                        for (int i = 0; i < NB_CASEBATEAU; i++)
                         {
                             Bateaux[indexBateau].pos[i].x = X - i;
                             Bateaux[indexBateau].pos[i].y = Y - i;
@@ -445,7 +437,7 @@ void afficherBateau()
     for (int indiceBateau = 0; indiceBateau < NB_BATEAU; indiceBateau++)
     {
         // Afficher l'en-tête de la ligne
-        cout << "Bateau " << (indiceBateau + 1) << " = ";
+        cout << "Bateau " << (indiceBateau + 1) << (indiceBateau == 0 ? " (O) " : " (X) ") << " = ";
         // Afficher les coordonnées de tous les points du bateau
         for (int coordBateau = 0; coordBateau < NB_CASEBATEAU; coordBateau++)
         {
