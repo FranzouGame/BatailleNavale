@@ -342,6 +342,10 @@ void genererBateau(int indexBateau)
                     }
                 }
             }
+            else
+            {
+                genererBateau(indexBateau);
+            }
 
             break;
         }
