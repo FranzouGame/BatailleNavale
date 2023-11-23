@@ -42,9 +42,6 @@ struct Bateau
 const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
 char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
 
-const unsigned short int NB_BATEAU = 2; // Nombre de bateaux pris en compte
-Bateau Bateaux[NB_BATEAU];              // Tableau de Bateaux contenant les NB_BATEAUX de bateaux
-
 int tourJoueur = 0;        // Variable stockant à qui est le tour
 EtatsPossibles etatPartie; // Décrit l'état de la partie
 int nbTirsJoueurs1 = 0;    // Stockage du nombre du tir du joueur 1
@@ -70,9 +67,13 @@ void afficherResultat(string pseudo1, string pseudo2);
 
 int main(void)
 {
-    // Variables locales
-    string nomJoueur1; // Nom du joueur 1
-    string nomJoueur2; // Nom du joueur 2
+
+    // Variables
+    string nomJoueur1;                      // Nom du joueur 1
+    string nomJoueur2;                      // Nom du joueur 2
+    int indexBateau;                        // Index du bateau en cours de traitement dans le tableau des bateaux
+    const unsigned short int NB_BATEAU = 2; // Nombre de bateaux pris en compte
+    Bateau Bateaux[NB_BATEAU];              // Tableau de Bateaux contenant les NB_BATEAUX de bateaux
 
     // Saisie du nom des joueurs
     cout << "Quel est le nom du joueur 1 : ";
@@ -81,8 +82,11 @@ int main(void)
     cin >> nomJoueur2;
 
     // Initialisation de la partie
+    // Initialisation des variables
+    indexBateau = 0;
+
     // Génération des bateaux
-    genererBateau(0);
+    genererBateau(indexBateau);
 
     // Jouer la partie
     while (true)
@@ -187,17 +191,17 @@ void afficherEnTete(string pseudo1, string pseudo2)
     }
 }
 
-void genererBateau(int indexBateau)
+void genererBateau(int indexBateau, int NB_BATEAU, Bateau Bateaux[])
 {
-    // Vérifier 
+    // Vérifier
     if (NB_BATEAU <= indexBateau)
     {
         return;
     }
 
-    int indiceDirection;  // Indice permettant de générer la direction dui bateau
-    int X;                // Position horizontable dans le tableau
-    int Y;                // Position verticale dans le tableau
+    int indiceDirection;        // Indice permettant de générer la direction dui bateau
+    int X;                      // Position horizontable dans le tableau
+    int Y;                      // Position verticale dans le tableau
     UneDirection directionElue; // Direction choisie aléatoirement
 
     // Génération des indices de la première case du bateau, et du sens de celui-ci
@@ -357,7 +361,7 @@ void genererBateau(int indexBateau)
     }
 }
 
-void verifBateauToucher(int ligne, int colonne)
+void verifBateauToucher(int ligne, int colonne, int NB_BATEAU, Bateau Bateaux[])
 {
     // Variables Locales
     int bateauToucher = 0; // 0 = non, 1 = joueur 1, 2 = joueur2
@@ -409,7 +413,7 @@ void verifBateauToucher(int ligne, int colonne)
     }
 }
 
-void afficherBateau()
+void afficherBateau(Bateau Bateaux[], int NB_BATEAU)
 {
     // Parcours des 2 bateaux du tableau Bateaux
     for (int indiceBateau = 0; indiceBateau < NB_BATEAU; indiceBateau++)
@@ -493,13 +497,9 @@ void nouveauTour()
             }
         }
     }
-    // Vérifier si on a un gagnant
-    verifierGagnant();
-    // Afficher la grille
-    afficherTableau();
 }
 
-void verifierGagnant()
+void verifierGagnant(int NB_BATEAU, Bateau Bateaux[], char plateauJeu[NB_CASES][NB_CASES])
 {
     // Variables locales
     int toucheBateau1 = 0;     // Nombre de tirs touchant le bateau 1
