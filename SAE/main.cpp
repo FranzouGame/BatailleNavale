@@ -63,7 +63,7 @@ void nouveauTour(); // A completer
 // But : Proposer un joueur de tirer et vérifier celui-ci
 void verifBateauToucher(int ligne, int colonne);
 // But : Vérifier si le tir du joueur touche un bateau ou s'il tire dans l'eau
-void verifGagnant();
+void verifierGagnant();
 // But : Vérifier si un des joueurs gagne ou si la partie continue
 void afficherResultat(string pseudo1, string pseudo2);
 // But : Afficher le résultat de la partie
@@ -100,7 +100,7 @@ int main(void)
         nouveauTour();
 
         // Vérifier si un des joueurs a gagné la partie
-        verifGagnant();
+        verifierGagnant();
 
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
@@ -189,7 +189,7 @@ void afficherEnTete(string pseudo1, string pseudo2)
 
 void genererBateau(int indexBateau)
 {
-
+    // Vérifier 
     if (NB_BATEAU <= indexBateau)
     {
         return;
@@ -198,7 +198,7 @@ void genererBateau(int indexBateau)
     int indiceDirection;  // Indice permettant de générer la direction dui bateau
     int X;                // Position horizontable dans le tableau
     int Y;                // Position verticale dans le tableau
-    UneDirection dirElue; // Direction choisie aléatoirement
+    UneDirection directionElue; // Direction choisie aléatoirement
 
     // Génération des indices de la première case du bateau, et du sens de celui-ci
     indiceDirection = random(1, 3);
@@ -209,20 +209,20 @@ void genererBateau(int indexBateau)
     switch (indiceDirection)
     {
     case 1:
-        dirElue = Verticale;
+        directionElue = Verticale;
         break;
     case 2:
-        dirElue = Horizontale;
+        directionElue = Horizontale;
         break;
     default:
-        dirElue = Diagonale;
+        directionElue = Diagonale;
         break;
     }
 
     // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
     if (plateauJeu[Y][X] == '\0')
     {
-        switch (dirElue)
+        switch (directionElue)
         {
         // Cas dans lequel le bateau est vertical
         case Verticale:
@@ -363,16 +363,16 @@ void verifBateauToucher(int ligne, int colonne)
     int bateauToucher = 0; // 0 = non, 1 = joueur 1, 2 = joueur2
 
     // Parcourir les bateaux
-    for (int i = 0; i < NB_BATEAU; i++)
+    for (int indiceBateau = 0; indiceBateau < NB_BATEAU; indiceBateau++)
     {
         // Parcourir les coordonnées de chaque bateau
-        for (int j = 0; j < NB_CASEBATEAU; j++)
+        for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASEBATEAU; indiceCaseBateau++)
         {
             // Vérifier si le tir du joueur touche un bateau
-            if (Bateaux[i].pos[j].x == ligne && Bateaux[i].pos[j].y == colonne)
+            if (Bateaux[indiceBateau].pos[indiceCaseBateau].x == ligne && Bateaux[indiceBateau].pos[indiceCaseBateau].y == colonne)
             {
                 // Vérifier si le bateau touché est le bateau 1
-                if (i == 0)
+                if (indiceBateau == 0)
                 {
                     bateauToucher = 1;
                 }
@@ -384,7 +384,7 @@ void verifBateauToucher(int ligne, int colonne)
                 break;
             }
         }
-        // Sortir de la boucle si le bateau est touché avant la fin de celle ci
+        // Sortir de la boucle si un bateau est touché avant la fin de celle ci
         if (bateauToucher == 1 || bateauToucher == 2)
         {
             break;
@@ -494,45 +494,46 @@ void nouveauTour()
         }
     }
     // Vérifier si on a un gagnant
-    verifGagnant();
+    verifierGagnant();
     // Afficher la grille
     afficherTableau();
 }
 
-void verifGagnant()
+void verifierGagnant()
 {
     // Variables locales
-    int toucheJoueur1 = 0; // Nombre de tirs touchant le bateau 1
-    int toucheJoueur2 = 0; // Nombre de tirs touchant le bateau 2
+    int toucheBateau1 = 0;     // Nombre de tirs touchant le bateau 1
+    int toucheBateau2 = 0;     // Nombre de tirs touchant le bateau 2
+    Coord coordEnVerification; // Coordonée en cours d'analyse
 
     // Parcours des 2 bateaux
-    for (int i = 0; i < NB_BATEAU; i++)
+    for (int indiceBateau = 0; indiceBateau < NB_BATEAU; indiceBateau++)
     {
         // Parcours des coordonnées des 2 bateaux
-        for (int j = 0; j < NB_CASEBATEAU; j++)
+        for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASEBATEAU; indiceCaseBateau++)
         {
             // Récupérer la coordonnée du bateau en cours
-            Coord coord = Bateaux[i].pos[j];
+            Coord coordEnVerification = Bateaux[indiceBateau].pos[indiceCaseBateau];
 
             // Vérifier si le nombre de cases touchées du bateau 1
-            if (plateauJeu[coord.x][coord.y] == 'O')
+            if (plateauJeu[coordEnVerification.x][coordEnVerification.y] == 'O')
             {
-                toucheJoueur1++;
+                toucheBateau1++;
             }
             // Vérifier si le nombre de cases touchées du bateau 2
-            else if (plateauJeu[coord.x][coord.y] == 'X')
+            else if (plateauJeu[coordEnVerification.x][coordEnVerification.y] == 'X')
             {
-                toucheJoueur2++;
+                toucheBateau2++;
             }
         }
 
         // Vérifier si le bateau 1 est coulé entièrement
-        if (toucheJoueur1 == 4)
+        if (toucheBateau1 == 4)
         {
             etatPartie = victoireJoueur1;
         }
         // Vérifier si le bateau 2 est coulé entièrement
-        else if (toucheJoueur2 == 4)
+        else if (toucheBateau2 == 4)
         {
             etatPartie = victoireJoueur2;
         }
