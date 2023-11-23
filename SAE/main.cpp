@@ -202,8 +202,8 @@ void genererBateau(int indexBateau)
 
     // Génération des indices de la première case du bateau, et du sens de celui-ci
     indiceDirection = random(1, 3);
-    X = random(1, 9);
-    Y = random(1, 9);
+    X = random(1, NB_CASES);
+    Y = random(1, NB_CASES);
 
     // Assignation de la direction
     switch (indiceDirection)
