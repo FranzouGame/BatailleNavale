@@ -71,8 +71,12 @@ void afficherResultat(string pseudo1, string pseudo2);
 int main(void)
 {
     // Variables locales
-    string nomJoueur1; // Nom du joueur 1
-    string nomJoueur2; // Nom du joueur 2
+    string nomJoueur1;        // Nom du joueur 1
+    string nomJoueur2;        // Nom du joueur 2
+    unsigned int nbTotalTirs; // Nombre total de tirs des 2 joueurs
+
+    // Initialisation
+    nbTotalTirs = 0;
 
     // Saisie du nom des joueurs
     cout << "Quel est le nom du joueur 1 : ";
@@ -87,6 +91,7 @@ int main(void)
     // Jouer la partie
     while (true)
     {
+
         // Nettoyer le terminal entre les 2 tours
         effacer();
 
@@ -105,15 +110,22 @@ int main(void)
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
 
-        // On vérifie si la partie est terminée, par abandon ou victoire d'un des joueurs
-        if (!(etatPartie == enCours))
+        // Mise à jour du nombre total de tirs
+        nbTotalTirs = nbTotalTirs + 1;
+
+        // On vérifie si la partie est terminée, seulement dans le cas ou les 2 joueurs ont déjà joué
+        if (nbTotalTirs % 2 == 0)
         {
-            afficherResultat(nomJoueur1, nomJoueur2);
-            break;
+            if (!(etatPartie == enCours))
+            {
+                break;
+            }
         }
     }
+    // Affichage du résultat
+    afficherResultat(nomJoueur1, nomJoueur2);
 
-    pause(10);
+    pause(2);
     return 0;
 }
 
