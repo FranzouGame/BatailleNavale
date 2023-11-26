@@ -45,8 +45,7 @@ char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
 const unsigned short int NB_BATEAU = 2; // Nombre de bateaux pris en compte
 Bateau Bateaux[NB_BATEAU];              // Tableau de Bateaux contenant les NB_BATEAUX de bateaux
 
-int tourJoueur = 0;        // Variable stockant à qui est le tour
-EtatsPossibles etatPartie; // Décrit l'état de la partie
+int tourJoueur = 0; // Variable stockant à qui est le tour
 
 // Déclaration des sous-programmes
 void afficherTableau();
@@ -57,24 +56,25 @@ void genererBateau(int indexBateau); // Diago a faire, peut être changer la gé
 // But : Générer les bateaux nécessaires pour la partie
 void afficherBateau();
 // But : Afficher les coordonnées des bateaux à l'écran
-void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur); // A completer
+void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPossibles &etatPartie); // A completer
 // But : Proposer un joueur de tirer et vérifier celui-ci
 void verifBateauToucher(int ligne, int colonne);
 // But : Vérifier si le tir du joueur touche un bateau ou s'il tire dans l'eau
-void verifierGagnant();
+void verifierGagnant(EtatsPossibles &etatPartie);
 // But : Vérifier si un des joueurs gagne ou si la partie continue
-void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbTirsJoueur2);
+void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbTirsJoueur2, EtatsPossibles etatPartie);
 // But : Afficher le résultat de la partie
 
 int main(void)
 {
 
     // Variables
-    string nomJoueur1;     // Nom du joueur 1
-    string nomJoueur2;     // Nom du joueur 2
-    int indexBateau;       // Index du bateau en cours de traitement dans le tableau des bateaux
-    int nbTirsJoueur1 = 0; // Stockage du nombre du tir du joueur 1
-    int nbTirsJoueur2 = 0; // Stockage du nombre de tirs du joeuur 2
+    string nomJoueur1;         // Nom du joueur 1
+    string nomJoueur2;         // Nom du joueur 2
+    int indexBateau;           // Index du bateau en cours de traitement dans le tableau des bateaux
+    int nbTirsJoueur1 = 0;     // Stockage du nombre du tir du joueur 1
+    int nbTirsJoueur2 = 0;     // Stockage du nombre de tirs du joeuur 2
+    EtatsPossibles etatPartie; // Décrit l'état de la partie
 
     // Saisie du nom des joueurs
     cout << "Quel est le nom du joueur 1 : ";
@@ -85,6 +85,7 @@ int main(void)
     // Initialisation de la partie
     // Initialisation des variables
     indexBateau = 0;
+    etatPartie = enCours;
 
     // Génération des bateaux
     genererBateau(indexBateau);
@@ -102,18 +103,17 @@ int main(void)
         afficherTableau();
 
         // Inviter le joueur concerné à effectuer son tir, et vérifier le résultat de celui ci
-        nouveauTour(nbTirsJoueur1, nbTirsJoueur2, tourJoueur);
+        nouveauTour(nbTirsJoueur1, nbTirsJoueur2, tourJoueur, etatPartie);
 
         // Vérifier si un des joueurs a gagné la partie
-        verifierGagnant();
+        verifierGagnant(etatPartie);
 
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
-    }
-    while (!(etatPartie != enCours && tourJoueur != 0));
+    } while (!(etatPartie != enCours && tourJoueur != 0));
 
     // Si la partie est terminée, afficher le résultat
-    afficherResultat(nomJoueur1, nomJoueur2, nbTirsJoueur1, nbTirsJoueur2);
+    afficherResultat(nomJoueur1, nomJoueur2, nbTirsJoueur1, nbTirsJoueur2, etatPartie);
     pause(2);
     return 0;
 }
@@ -230,14 +230,15 @@ void genererBateau(int indexBateau)
             if (X > 6)
             {
                 // Convertir Y au besoin
-                X = X - (X - 6);
+                X = NB_CASES - NB_CASEBATEAU + 1;
             }
             // Vérifier si les cases sont libres avant de générer le bateau
             for (int i = 0; i < NB_CASEBATEAU; i++)
             {
                 if (plateauJeu[X + i][Y] != '\0')
                 {
-                    genererBateau(indexBateau); // Si une case est occupée, générer un nouveau bateau
+                    // Si une case est occupée, générer un nouveau bateau
+                    genererBateau(indexBateau);
                     return;
                 }
             }
@@ -253,7 +254,7 @@ void genererBateau(int indexBateau)
         case Horizontale:
             if (Y > 6)
             {
-                Y = Y - (Y - 6);
+                Y = NB_CASES - NB_CASEBATEAU + 1;
             }
             // Vérifier si les cases sont libres avant de générer le bateau
             for (int i = 0; i < NB_CASEBATEAU; i++)
@@ -463,7 +464,7 @@ void afficherBateau()
     }
 }
 
-void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur)
+void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPossibles &etatPartie)
 {
     // Variables locales
     string action;     // Stockage du tir du joueur, ou de son abandon
@@ -538,7 +539,7 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur)
     } while (valideSaisie == false);
 }
 
-void verifierGagnant()
+void verifierGagnant(EtatsPossibles &etatPartie)
 {
     // Variables locales
     int toucheBateau1 = 0;     // Nombre de tirs touchant le bateau 1
@@ -579,7 +580,7 @@ void verifierGagnant()
     }
 }
 
-void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbTirsJoueur2)
+void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbTirsJoueur2, EtatsPossibles etatPartie)
 {
     // Vérifier qui a gagné
     if (etatPartie == victoireJoueur1)
