@@ -233,31 +233,49 @@ void genererBateau(int indexBateau)
                 // Convertir Y au besoin
                 X = NB_CASES - NB_CASES_BATEAU + 1;
             }
-            // Vérifier si les cases sont libres avant de générer le bateau
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            // Vérifier quel bateau générer
+            if (indexBateau == 1)
             {
-                if (Bateaux[indexBateau].pos[i].x == X && Bateaux[indexBateau].pos[i].y == Y)
+                // Générer le bateau 2
+                // Vérifier si les cases sont libres avant de générer le bateau
+                for (int i = 0; i < NB_CASES_BATEAU; i++)
                 {
-                    // Si une case est occupée, générer un nouveau bateau
-                    genererBateau(indexBateau);
-                    return;
-                }
-                else if (Bateaux[indexBateau].pos[i].x == X && Bateaux[indexBateau].pos[i].y + 1 == Y)
-                {
-                    compteur = compteur + 1;
-                }
-                else if (Bateaux[indexBateau].pos[i].x == X && Bateaux[indexBateau].pos[i].y - 1 == Y)
-                {
-                    compteur = compteur + 1;
-                }
-                if (compteur != 2)
-                {
-                    for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
+                    if (Bateaux[indexBateau].pos[i].x == X && Bateaux[indexBateau].pos[i].y == Y)
                     {
-                        Bateaux[indexBateau].pos[indiceCaseBateau].x = X + indiceCaseBateau;
-                        Bateaux[indexBateau].pos[indiceCaseBateau].y = Y;
+                        // Si une case est occupée, générer un nouveau bateau
+                        genererBateau(indexBateau);
+                        return;
                     }
-                    genererBateau(indexBateau + 1);
+                    else if (Bateaux[indexBateau].pos[i].x == X && Bateaux[indexBateau].pos[i].y + 1 == Y)
+                    {
+                        compteur = compteur + 1;
+                    }
+                    else if (Bateaux[indexBateau].pos[i].x == X && Bateaux[indexBateau].pos[i].y - 1 == Y)
+                    {
+                        compteur = compteur + 1;
+                    }
+                    if (compteur != 2)
+                    {
+                        for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
+                        {
+                            Bateaux[indexBateau].pos[indiceCaseBateau].x = X + indiceCaseBateau;
+                            Bateaux[indexBateau].pos[indiceCaseBateau].y = Y;
+                        }
+                    }
+                    else
+                    {
+                        // Regénérer des coordonnées
+                        genererBateau(indexBateau);
+                    }
+                }
+            }
+            else
+            {
+                // Générer le bateau 1
+                for (int indice = 0; indice < NB_CASES_BATEAU; indice++)
+                {
+                    Bateaux[indexBateau].pos[indice].x = X + indice;
+                    Bateaux[indexBateau].pos[indice].y = Y;
                 }
             }
 
@@ -268,44 +286,64 @@ void genererBateau(int indexBateau)
             {
                 Y = NB_CASES - NB_CASES_BATEAU + 1;
             }
-            // Vérifier si les cases sont libres avant de générer le bateau
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+
+            // Vérifier quel bateau générer
+            if (indexBateau == 1)
             {
-                // Vérifier si la case d'origine du bateau est libre
-                if (Bateaux[indexBateau - 1].pos[i].x == X && Bateaux[indexBateau - 1].pos[i].y == Y)
+                // Générer le bateau 2
+                // Vérifier si les cases sont libres avant de générer le bateau
+                for (int i = 0; i < NB_CASES_BATEAU; i++)
                 {
-                    genererBateau(indexBateau);
-                    return;
-                }
-                // Vérifier si les case situées au dessus du potentiel bateau sont libres
-                else if (Bateaux[indexBateau - 1].pos[i].x + 1 == X && Bateaux[indexBateau - 1].pos[i].y == Y)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier si les cases situés en dessous du potentiel bateau sont libres
-                else if (Bateaux[indexBateau - 1].pos[i].x - 1 == X && Bateaux[indexBateau - 1].pos[i].y - 1 == Y)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier le nombre cases adjscentes
-                if (compteur != 2)
-                {
-                    // Affecter les coordonnées au bateau
-                    for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
+                    // Vérifier si la case d'origine du bateau est libre
+                    if (Bateaux[indexBateau - 1].pos[i].x == X && Bateaux[indexBateau - 1].pos[i].y == Y)
                     {
-                        // Affecter la valeur X
-                        Bateaux[indexBateau].pos[indiceCaseBateau].x = X;
-                        // Affecter la valeur Y
-                        Bateaux[indexBateau].pos[indiceCaseBateau].y = Y + indiceCaseBateau;
+                        genererBateau(indexBateau);
+                        return;
                     }
-                    // Lancer la génération du deuxième bateau
-                    genererBateau(indexBateau + 1);
+                    // Vérifier si les case situées au dessus du potentiel bateau sont libres
+                    else if (Bateaux[indexBateau - 1].pos[i].x + 1 == X && Bateaux[indexBateau - 1].pos[i].y == Y)
+                    {
+                        compteur = compteur + 1;
+                    }
+                    // Vérifier si les cases situés en dessous du potentiel bateau sont libres
+                    else if (Bateaux[indexBateau - 1].pos[i].x - 1 == X && Bateaux[indexBateau - 1].pos[i].y - 1 == Y)
+                    {
+                        compteur = compteur + 1;
+                    }
+                    // Vérifier le nombre cases adjscentes
+                    if (compteur != 2)
+                    {
+                        // Affecter les coordonnées au bateau
+                        for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
+                        {
+                            // Affecter la valeur X
+                            Bateaux[indexBateau].pos[indiceCaseBateau].x = X;
+                            // Affecter la valeur Y
+                            Bateaux[indexBateau].pos[indiceCaseBateau].y = Y + indiceCaseBateau;
+                        }
+                    }
+                    else
+                    {
+                        // Regénérer des coordonnées
+                        genererBateau(indexBateau);
+                    }
                 }
+            }
+            else
+            {
+                // Générer le bateau 1
+                for (int indice = 0; indice < NB_CASES_BATEAU; indice++)
+                {
+                    Bateaux[indexBateau].pos[indice].x = X;
+                    Bateaux[indexBateau].pos[indice].y = Y + indice;
+                }
+                // Générer le bateau suivant
+                genererBateau(indexBateau + 1);
             }
             break;
 
         default:
-            if(indexBateau == 1)
+            if (indexBateau == 1)
             {
                 if (X - NB_CASES_BATEAU + 1 > 0 && Y + NB_CASES_BATEAU - 1 < 10) // En haut à droite
                 {
@@ -421,39 +459,39 @@ void genererBateau(int indexBateau)
             // Générer le bateau 1
             else
             {
-                if ( X - NB_CASES_BATEAU > 0 && Y + NB_CASES_BATEAU - 1 <= NB_CASES) // En haut à droite
+                if (X - NB_CASES_BATEAU > 0 && Y + NB_CASES_BATEAU - 1 <= NB_CASES) // En haut à droite
                 {
-                    // Générer un bateau diagonal 
-                    for (int indice = 0 ; indice < NB_CASES_BATEAU ; indice++)
+                    // Générer un bateau diagonal
+                    for (int indice = 0; indice < NB_CASES_BATEAU; indice++)
                     {
-                        Bateaux[indexBateau].pos[indice].x = X - indice; 
+                        Bateaux[indexBateau].pos[indice].x = X - indice;
                         Bateaux[indexBateau].pos[indice].y = Y + indice;
                     }
                 }
-                if ( X + NB_CASES_BATEAU - 1 <= NB_CASES && Y + NB_CASES_BATEAU - 1 <= NB_CASES) // En bas à droite
+                if (X + NB_CASES_BATEAU - 1 <= NB_CASES && Y + NB_CASES_BATEAU - 1 <= NB_CASES) // En bas à droite
                 {
-                    // Générer un bateau diagonal 
-                    for (int indice = 0 ; indice < NB_CASES_BATEAU ; indice++)
+                    // Générer un bateau diagonal
+                    for (int indice = 0; indice < NB_CASES_BATEAU; indice++)
                     {
-                        Bateaux[indexBateau].pos[indice].x = X + indice; 
+                        Bateaux[indexBateau].pos[indice].x = X + indice;
                         Bateaux[indexBateau].pos[indice].y = Y + indice;
                     }
                 }
-                if ( X + NB_CASES_BATEAU - 1 <= NB_CASES && Y - NB_CASES_BATEAU + 1 > 0) // En bas à gauche
+                if (X + NB_CASES_BATEAU - 1 <= NB_CASES && Y - NB_CASES_BATEAU + 1 > 0) // En bas à gauche
                 {
-                    // Générer un bateau diagonal 
-                    for (int indice = 0 ; indice < NB_CASES_BATEAU ; indice++)
+                    // Générer un bateau diagonal
+                    for (int indice = 0; indice < NB_CASES_BATEAU; indice++)
                     {
-                        Bateaux[indexBateau].pos[indice].x = X + indice; 
+                        Bateaux[indexBateau].pos[indice].x = X + indice;
                         Bateaux[indexBateau].pos[indice].y = Y - indice;
                     }
                 }
-                if ( X - NB_CASES_BATEAU + 1 > 0 && Y - NB_CASES_BATEAU + 1 > 0) // En haut à gauche
+                if (X - NB_CASES_BATEAU + 1 > 0 && Y - NB_CASES_BATEAU + 1 > 0) // En haut à gauche
                 {
-                    // Générer un bateau diagonal 
-                    for (int indice = 0 ; indice < NB_CASES_BATEAU ; indice++)
+                    // Générer un bateau diagonal
+                    for (int indice = 0; indice < NB_CASES_BATEAU; indice++)
                     {
-                        Bateaux[indexBateau].pos[indice].x = X - indice; 
+                        Bateaux[indexBateau].pos[indice].x = X - indice;
                         Bateaux[indexBateau].pos[indice].y = Y - indice;
                     }
                 }
