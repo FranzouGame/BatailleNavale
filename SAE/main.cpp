@@ -110,7 +110,7 @@ int main(void)
 
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
-    } while (!(etatPartie != enCours && tourJoueur != 0));
+    } while (!(etatPartie != enCours && tourJoueur == 0));
 
     // Si la partie est terminée, afficher le résultat
     afficherResultat(nomJoueur1, nomJoueur2, nbTirsJoueur1, nbTirsJoueur2, etatPartie);
@@ -298,15 +298,15 @@ void genererBateau(int indexBateau)
                     if (Bateaux[indexBateau - 1].pos[i].x == X && Bateaux[indexBateau - 1].pos[i].y == Y)
                     {
                         genererBateau(indexBateau);
-                        return;
+                        break;
                     }
-                    // Vérifier si les case situées au dessus du potentiel bateau sont libres
-                    else if (Bateaux[indexBateau - 1].pos[i].x + 1 == X && Bateaux[indexBateau - 1].pos[i].y == Y)
+                    // Vérifier si les case situées en dessous du potentiel bateau sont libres
+                    else if (Bateaux[indexBateau - 1].pos[i].x == X + 1 && Bateaux[indexBateau - 1].pos[i].y == Y)
                     {
                         compteur = compteur + 1;
                     }
-                    // Vérifier si les cases situés en dessous du potentiel bateau sont libres
-                    else if (Bateaux[indexBateau - 1].pos[i].x - 1 == X && Bateaux[indexBateau - 1].pos[i].y - 1 == Y)
+                    // Vérifier si les cases situés au dessus du potentiel bateau sont libres
+                    else if (Bateaux[indexBateau - 1].pos[i].x == X - 1 && Bateaux[indexBateau - 1].pos[i].y == Y)
                     {
                         compteur = compteur + 1;
                     }
