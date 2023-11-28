@@ -573,6 +573,8 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
     // Variables locales
     string action;     // Stockage du tir du joueur, ou de son abandon
     bool valideSaisie; // Indicateur de validité de la saisie du joueur
+    int ligne;         // Ligne du tir du joueur
+    int colonne;       // colonne du tir du joeuur
 
     // Initialisation
     // Initialiser l'indicateur de validité
@@ -580,7 +582,7 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
 
     // Traitements
     // Saisie-verification avec message d'erreur de la cible du tir par l'utilisisateur
-    do
+    while (true)
     {
         cout << "Votre tir (ex. A3) ou abandonner (@@) ? ";
         cin >> action;
@@ -592,26 +594,24 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
             if (tourJoueur == 0)
             {
                 etatPartie = abandonJoueur1;
-                valideSaisie = true;
+                break;
             }
             // Vérifier si le joueur 2 abandonne
             else
             {
                 etatPartie = abandonJoueur2;
-                valideSaisie = true;
+                break;
             }
         }
         else
         {
             // Variables
-            int ligne = (int)action[1] - 48;
-            int colonne = int(action[0]) - 64;
+            ligne = (int)action[1] - 48;
+            colonne = int(action[0]) - 64;
 
             // Vérifier que le tir est valide
             if (action.length() == 2 && colonne > 0 && colonne < 10 && ligne > 0 && ligne < 10)
             {
-                // Vérifier si le tir du joueur touche un bateau
-                verifBateauToucher(ligne, colonne);
                 // Mettre à jour l'indicateur de validité du tir
                 valideSaisie = true;
 
@@ -625,6 +625,7 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
                 {
                     nbTirsJoueur2++;
                 }
+                break;
             }
             else
             {
@@ -640,7 +641,9 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
                 }
             }
         }
-    } while (valideSaisie == false);
+    }
+    // Vérifier si le tir du joueur touche un bateau
+    verifBateauToucher(ligne, colonne);
 }
 
 void verifierGagnant(EtatsPossibles &etatPartie)
@@ -687,28 +690,30 @@ void verifierGagnant(EtatsPossibles &etatPartie)
 void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbTirsJoueur2, EtatsPossibles etatPartie)
 {
     // Vérifier qui a gagné
-    if (etatPartie == victoireJoueur1)
+    switch (etatPartie)
     {
+    case victoireJoueur1:
         // Afficher le message de victoire du joueur 1
         cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueur1 << " tirs ###" << endl;
         cout << "### Joueur 2 " << pseudo2 << " : PERD ###" << endl;
-    }
-    else if (etatPartie == victoireJoueur2)
-    {
+        break;
+
+    case victoireJoueur2:
         // Afficher le message de victoire du joueur 2
         cout << "### Joueur 1 " << pseudo1 << " : PERD ###" << endl;
         cout << "### Joueur 2 " << pseudo2 << " : GAGNE en " << nbTirsJoueur2 << " tirs ###" << endl;
-    }
-    else if (etatPartie == abandonJoueur1)
-    {
+        break;
+
+    case abandonJoueur1:
         // Afficher le message d'abandon du joueur 1
         cout << "### Joueur 1 " << pseudo1 << " : ABANDON ###" << endl;
         cout << "### Joueur 2 " << pseudo2 << " : GAGNE en " << nbTirsJoueur2 << " tirs ###" << endl;
-    }
-    else if (etatPartie == abandonJoueur2)
-    {
+        break;
+
+    default:
         // Affficher le message d'abandon du joueur 2
         cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueur1 << " tirs ###" << endl;
         cout << "### Joueur 1 " << pseudo2 << " : ABANDON ###" << endl;
+        break;
     }
 }
