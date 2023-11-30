@@ -224,7 +224,7 @@ void genererBateau(int indexBateau)
     int compteur = 0;           // Compteur de cases adjacentes lors de la génération d'un bateau
 
     // Génération des indices de la première case du bateau, et du sens de celui-ci
-    indiceDirection = random(1, 3);
+    indiceDirection = random(3, 3);
     X = random(1, NB_CASES);
     Y = random(1, NB_CASES);
 
@@ -258,7 +258,7 @@ void genererBateau(int indexBateau)
 
         for (int i = 0; i < NB_CASES_BATEAU; i++)
         {
-            if (!positionEstVide(indexBateau, Y, X + i))
+            if (!positionEstVide(0, Y, X + i))
             {
                 genererBateau(indexBateau);
                 return;
@@ -282,7 +282,7 @@ void genererBateau(int indexBateau)
 
         for (int i = 0; i < NB_CASES_BATEAU; i++)
         {
-            if (!positionEstVide(indexBateau, Y + i, X))
+            if (!positionEstVide(0, Y + i, X))
             {
                 genererBateau(indexBateau);
                 return;
@@ -294,43 +294,33 @@ void genererBateau(int indexBateau)
         break;
 
     default:
-        if (X - NB_CASES_BATEAU + 1 > 0 && Y + NB_CASES_BATEAU - 1 < 10) // En haut à droite
+        if (X + NB_CASES_BATEAU - 1 < NB_CASES && Y - NB_CASES_BATEAU + 1 > 0) // En haut à droite
         {
+            // Génération des positions du bateau
+            genererBateauPosition(indexBateau, Y, X, -1, 1);
+
+            // Vérifier les croisements
             for (int i = 0; i < NB_CASES_BATEAU; i++)
             {
-                if (!positionEstVide(indexBateau, Y + i, X - i))
+                int nouvelleX = Bateaux[indexBateau].pos[i].x;
+                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+
+                // Vérifier la case de gauche de la case en cours
+                if (!positionEstVide(0, nouvelleY - i, nouvelleX + i) || !positionEstVide(0, nouvelleY + i, nouvelleX + i))
                 {
                     genererBateau(indexBateau);
                     return;
                 }
             }
 
-            // Vérifier les croisements
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
-            {
-                // Vérifier la case de gauche de la case en cours
-                if (Bateaux[indexBateau - 1].pos[i].x - i == X - i && Bateaux[indexBateau - 1].pos[i].y + i - 1 == Y + i)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier la case de droite de la case en cours
-                else if (Bateaux[indexBateau - 1].pos[i].x - i == X - i && Bateaux[indexBateau - 1].pos[i].y + i + 1 == Y + i)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier le compteur
-                if (compteur != 2)
-                {
-                    genererBateauPosition(indexBateau, Y, X, 1, -1);
-                    genererBateau(indexBateau + 1);
-                }
-            }
+            // Si aucun croisement n'a été détecté, passer au bateau suivant
+            genererBateau(indexBateau + 1);
         }
         else if (X + NB_CASES_BATEAU - 1 < 10 && Y + NB_CASES_BATEAU - 1 < 10) // En bas à droite
         {
             for (int i = 0; i < NB_CASES_BATEAU; i++)
             {
-                if (!positionEstVide(indexBateau, Y + i, X + i))
+                if (!positionEstVide(0, Y + i, X + i))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -362,7 +352,7 @@ void genererBateau(int indexBateau)
         {
             for (int i = 0; i < NB_CASES_BATEAU; i++)
             {
-                if (!positionEstVide(indexBateau, Y - i, X + i))
+                if (!positionEstVide(0, Y - i, X + i))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -393,7 +383,7 @@ void genererBateau(int indexBateau)
         {
             for (int i = 0; i < NB_CASES_BATEAU; i++)
             {
-                if (!positionEstVide(indexBateau, Y - i, X - i))
+                if (!positionEstVide(0, Y - i, X - i))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -420,6 +410,11 @@ void genererBateau(int indexBateau)
                     genererBateau(indexBateau + 1);
                 }
             }
+        }
+        else
+        {
+            genererBateau(indexBateau);
+            return;
         }
     }
 }
