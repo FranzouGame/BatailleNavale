@@ -413,7 +413,7 @@ void verifBateauToucher(int ligne, int colonne)
         // Parcourir les coordonnées de chaque bateau
         for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
         {
-            // Vérifier si le tir du joueur touche un bateau
+            // Vérifier si le tir du joueur touche un bateau, puis quel bateau il touche
             if (Bateaux[indiceBateau].pos[indiceCaseBateau].x == ligne && Bateaux[indiceBateau].pos[indiceCaseBateau].y == colonne)
             {
                 // Vérifier si le bateau touché est le bateau 1
@@ -429,25 +429,22 @@ void verifBateauToucher(int ligne, int colonne)
                 break;
             }
         }
-        // Sortir de la boucle si un bateau est touché avant la fin de celle ci
+        // Vérifier si un bateau a été touché
         if (bateauToucher == 1 || bateauToucher == 2)
         {
             break;
         }
     }
 
-    // Mettre à jour la grille en fonction du tir du joueur
-    // Afficher un point si le joueur tire dans l'eau
+    // Placer le tir sur la grille
     if (bateauToucher == 0)
     {
         plateauJeu[ligne][colonne] = '.';
     }
-    // Afficher un O si le joueur touche le bateau 1
     else if (bateauToucher == 1)
     {
         plateauJeu[ligne][colonne] = 'O';
     }
-    // Afficher un X si le joueur touche le bateau 2
     else if (bateauToucher == 2)
     {
         plateauJeu[ligne][colonne] = 'X';
@@ -514,7 +511,7 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
         }
         else
         {
-            // Variables
+            // Convertir la saisie du joueur en entiers
             int ligne = (int)action[1] - 48;
             int colonne = int(action[0]) - 64;
 
@@ -526,12 +523,11 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
                 // Mettre à jour l'indicateur de validité du tir
                 valideSaisie = true;
 
-                // Mettre à jour le nombre de tirs du joueur 1
+                // Incrémenter le compteur de tirs du joueur concerné
                 if (tourJoueur == 0)
                 {
                     nbTirsJoueur1++;
                 }
-                // Mettre à jour le nombre de tirs du joueur 2
                 else
                 {
                     nbTirsJoueur2++;
@@ -539,12 +535,13 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
             }
             else
             {
+                // Vérifier et afficher où est l'erreur
                 if (colonne < 0 || colonne > 9)
                 {
                     // Afficher le message d'erreur
                     cout << "### Erreur en X ###" << endl;
                 }
-                if ((ligne < 65 || ligne > 73))
+                if (ligne < 65 || ligne > 73)
                 {
                     // Afficher le message d'erreur
                     cout << "### Erreur en Y ###" << endl;
@@ -570,7 +567,7 @@ void verifierGagnant(EtatsPossibles &etatPartie)
             // Récupérer la coordonnée du bateau en cours
             Coord coordEnVerification = Bateaux[indiceBateau].pos[indiceCaseBateau];
 
-            // Vérifier si le nombre de cases touchées du bateau 1
+            // Vérifier le nombre de cases touchées du bateau 1
             if (plateauJeu[coordEnVerification.x][coordEnVerification.y] == 'O')
             {
                 toucheBateau1++;
