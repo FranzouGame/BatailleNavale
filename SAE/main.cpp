@@ -257,9 +257,9 @@ void genererBateau(int indexBateau)
 
         if (indexBateau != 0)
         {
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            for (int indicePos = 0; indicePos < NB_CASES_BATEAU; indicePos++)
             {
-                if (!positionEstVide(0, Y, X + i))
+                if (!positionEstVide(0, Y, X + indicePos))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -286,9 +286,9 @@ void genererBateau(int indexBateau)
 
         if (indexBateau != 0)
         {
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            for (int indicePos = 0; indicePos < NB_CASES_BATEAU; indicePos++)
             {
-                if (!positionEstVide(0, Y + i, X))
+                if (!positionEstVide(0, Y + indicePos, X))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -309,10 +309,10 @@ void genererBateau(int indexBateau)
             genererBateauPosition(indexBateau, Y, X, 1, -1);
 
             // Vérifier les croisements
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            for (int indicePos = 0; indicePos < NB_CASES_BATEAU; indicePos++)
             {
-                int nouvelleX = Bateaux[indexBateau].pos[i].x;
-                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+                int nouvelleX = Bateaux[indexBateau].pos[indicePos].x;
+                int nouvelleY = Bateaux[indexBateau].pos[indicePos].y;
 
                 // Vérifier la case de gauche de la case en cours
                 if (!positionEstVide(0, nouvelleY, nouvelleX - 1) || !positionEstVide(0, nouvelleY, nouvelleX + 1) || !positionEstVide(0, nouvelleY, nouvelleX))
@@ -331,10 +331,10 @@ void genererBateau(int indexBateau)
             genererBateauPosition(indexBateau, Y, X, 1, 1);
 
             // Vérifier les croisements
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            for (int indicePos = 0; indicePos < NB_CASES_BATEAU; indicePos++)
             {
-                int nouvelleX = Bateaux[indexBateau].pos[i].x;
-                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+                int nouvelleX = Bateaux[indexBateau].pos[indicePos].x;
+                int nouvelleY = Bateaux[indexBateau].pos[indicePos].y;
 
                 // Vérifier la case de gauche de la case en cours
                 if (!positionEstVide(0, nouvelleY, nouvelleX - 1) || !positionEstVide(0, nouvelleY, nouvelleX + 1) || !positionEstVide(0, nouvelleY, nouvelleX))
@@ -353,10 +353,10 @@ void genererBateau(int indexBateau)
             genererBateauPosition(indexBateau, Y, X, -1, 1);
 
             // Vérifier les croisements
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            for (int indicePos = 0; indicePos < NB_CASES_BATEAU; indicePos++)
             {
-                int nouvelleX = Bateaux[indexBateau].pos[i].x;
-                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+                int nouvelleX = Bateaux[indexBateau].pos[indicePos].x;
+                int nouvelleY = Bateaux[indexBateau].pos[indicePos].y;
 
                 // Vérifier la case de gauche de la case en cours
                 if (!positionEstVide(0, nouvelleY, nouvelleX - 1) || !positionEstVide(0, nouvelleY, nouvelleX + 1) || !positionEstVide(0, nouvelleY, nouvelleX))
@@ -375,10 +375,10 @@ void genererBateau(int indexBateau)
             genererBateauPosition(indexBateau, Y, X, -1, -1);
 
             // Vérifier les croisements
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            for (int indicePos = 0; indicePos < NB_CASES_BATEAU; indicePos++)
             {
-                int nouvelleX = Bateaux[indexBateau].pos[i].x;
-                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+                int nouvelleX = Bateaux[indexBateau].pos[indicePos].x;
+                int nouvelleY = Bateaux[indexBateau].pos[indicePos].y;
 
                 // Vérifier la case de gauche de la case en cours
                 if (!positionEstVide(0, nouvelleY, nouvelleX - 1) || !positionEstVide(0, nouvelleY, nouvelleX + 1) || !positionEstVide(0, nouvelleY, nouvelleX))
