@@ -484,21 +484,16 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
     // Saisie-verification avec message d'erreur de la cible du tir par l'utilisisateur
     do
     {
+        // Affichage du message d'invitation à la saisie
         if (nbTirsJoueur2 < 1)
         {
             cout << "Votre 1er tir (ex. A3) ou abandonner (@@) ? ";
         }
         else
         {
-            if (tourJoueur == 0)
-            {
-                cout << "Votre " << nbTirsJoueur1 + 1 << "eme tir (ex. A3) ou abandonner (@@) ? ";
-            }
-            else
-            {
-                cout << "Votre " << nbTirsJoueur2 + 1 << "eme tir (ex. A3) ou abandonner (@@) ? ";
-            }
+            cout << "Votre "<< nbTirsJoueur2+1<< "eme tir (ex. A3) ou abandonner (@@) ? ";
         }
+        // Saisie du tir du joueur
         cin >> action;
 
         // Vérifier l'abandon du joueur
