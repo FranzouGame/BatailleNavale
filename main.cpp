@@ -106,7 +106,10 @@ int main(void)
         nouveauTour(nbTirsJoueur1, nbTirsJoueur2, tourJoueur, etatPartie);
 
         // Vérifier si un des joueurs a gagné la partie
-        verifierGagnant(etatPartie);
+        if (etatPartie == enCours)
+        {
+            verifierGagnant(etatPartie);
+        }
 
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
@@ -316,7 +319,7 @@ void genererBateau(int indexBateau)
                 int nouvelleY = Bateaux[indexBateau].pos[i].y;
 
                 // Vérifier la case de gauche de la case en cours
-                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0,  nouvelleY + 1 , nouvelleX + i) || !positionEstVide(0,nouvelleY, nouvelleX))
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i) || !positionEstVide(0, nouvelleY, nouvelleX))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -338,7 +341,7 @@ void genererBateau(int indexBateau)
                 int nouvelleY = Bateaux[indexBateau].pos[i].y;
 
                 // Vérifier la case de gauche de la case en cours
-                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0,  nouvelleY + 1 , nouvelleX + i) || !positionEstVide(0,nouvelleY, nouvelleX))
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i) || !positionEstVide(0, nouvelleY, nouvelleX))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -360,7 +363,7 @@ void genererBateau(int indexBateau)
                 int nouvelleY = Bateaux[indexBateau].pos[i].y;
 
                 // Vérifier la case de gauche de la case en cours
-                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0,  nouvelleY + 1 , nouvelleX + i) || !positionEstVide(0,nouvelleY, nouvelleX))
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i) || !positionEstVide(0, nouvelleY, nouvelleX))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -382,7 +385,7 @@ void genererBateau(int indexBateau)
                 int nouvelleY = Bateaux[indexBateau].pos[i].y;
 
                 // Vérifier la case de gauche de la case en cours
-                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0,  nouvelleY + 1 , nouvelleX + i) || !positionEstVide(0,nouvelleY, nouvelleX))
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i) || !positionEstVide(0, nouvelleY, nouvelleX))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -609,7 +612,7 @@ void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbT
     case abandonJoueur2:
         // Affficher le message d'abandon du joueur 2
         cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueur1 << " tirs ###" << endl;
-        cout << "### Joueur 2 " << pseudo2 << " : ABANDON ###" << endl;    
+        cout << "### Joueur 2 " << pseudo2 << " : ABANDON ###" << endl;
         break;
     default:
         break;
