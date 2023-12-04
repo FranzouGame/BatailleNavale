@@ -204,8 +204,8 @@ void genererBateauPosition(int indexBateau, int X, int Y, int incrementX, int in
 {
     for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
     {
-        Bateaux[indexBateau].pos[indiceCaseBateau].x = X + incrementX * indiceCaseBateau;
-        Bateaux[indexBateau].pos[indiceCaseBateau].y = Y + incrementY * indiceCaseBateau;
+        Bateaux[indexBateau].pos[indiceCaseBateau].x = X + incrementY * indiceCaseBateau;
+        Bateaux[indexBateau].pos[indiceCaseBateau].y = Y + incrementX * indiceCaseBateau;
     }
 }
 
@@ -307,7 +307,7 @@ void genererBateau(int indexBateau)
         if (X + NB_CASES_BATEAU - 1 < NB_CASES && Y - NB_CASES_BATEAU + 1 > 0) // En haut à droite
         {
             // Génération des positions du bateau
-            genererBateauPosition(indexBateau, Y, X, -1, 1);
+            genererBateauPosition(indexBateau, Y, X, 1, -1);
 
             // Vérifier les croisements
             for (int i = 0; i < NB_CASES_BATEAU; i++)
@@ -316,7 +316,7 @@ void genererBateau(int indexBateau)
                 int nouvelleY = Bateaux[indexBateau].pos[i].y;
 
                 // Vérifier la case de gauche de la case en cours
-                if (!positionEstVide(0, nouvelleY - i, nouvelleX + i) || !positionEstVide(0, nouvelleY + i, nouvelleX + i))
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i))
                 {
                     genererBateau(indexBateau);
                     return;
@@ -328,98 +328,69 @@ void genererBateau(int indexBateau)
         }
         else if (X + NB_CASES_BATEAU - 1 < 10 && Y + NB_CASES_BATEAU - 1 < 10) // En bas à droite
         {
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
-            {
-                if (!positionEstVide(0, Y + i, X + i))
-                {
-                    genererBateau(indexBateau);
-                    return;
-                }
-            }
+            // Génération des positions du bateau
+            genererBateauPosition(indexBateau, Y, X, 1, 1);
 
             // Vérifier les croisements
             for (int i = 0; i < NB_CASES_BATEAU; i++)
             {
+                int nouvelleX = Bateaux[indexBateau].pos[i].x;
+                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+
                 // Vérifier la case de gauche de la case en cours
-                if (Bateaux[indexBateau - 1].pos[i].x + i == X + i && Bateaux[indexBateau - 1].pos[i].y + i - 1 == Y + i)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier la case de droite de la case en cours
-                else if (Bateaux[indexBateau - 1].pos[i].x + i == X + i && Bateaux[indexBateau - 1].pos[i].y + i + 1 == Y + i)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier le compteur
-                if (compteur != 2)
-                {
-                    genererBateauPosition(indexBateau, Y, X, 1, 1);
-                    genererBateau(indexBateau + 1);
-                }
-            }
-        }
-        else if (X + NB_CASES_BATEAU - 1 < 10 && Y - NB_CASES_BATEAU + 1 > 0) // En bas à gauche
-        {
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
-            {
-                if (!positionEstVide(0, Y - i, X + i))
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i))
                 {
                     genererBateau(indexBateau);
                     return;
                 }
             }
 
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
-            {
-                // Vérifier la case de gauche de la case en cours
-                if (Bateaux[indexBateau - 1].pos[i].x + i == X + i && Bateaux[indexBateau - 1].pos[i].y - i - 1 == Y - i)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier la case de droite de la case en cours
-                else if (Bateaux[indexBateau - 1].pos[i].x + i == X + i && Bateaux[indexBateau - 1].pos[i].y - i + 1 == Y - i)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier le compteur
-                if (compteur != 2)
-                {
-                    genererBateauPosition(indexBateau, Y, X, -1, 1);
-                    genererBateau(indexBateau + 1);
-                }
-            }
+            // Si aucun croisement n'a été détecté, passer au bateau suivant
+            genererBateau(indexBateau + 1);
         }
-        else if (X + NB_CASES_BATEAU - 1 < 10 && Y - NB_CASES_BATEAU + 1 > 0) // En haut à gauche
+        else if (X - NB_CASES_BATEAU + 1 > 0 && Y + NB_CASES_BATEAU - 1 <= NB_CASES) // En bas à gauche
         {
+            // Génération des positions du bateau
+            genererBateauPosition(indexBateau, Y, X, -1, 1);
+
+            // Vérifier les croisements
             for (int i = 0; i < NB_CASES_BATEAU; i++)
             {
-                if (!positionEstVide(0, Y - i, X - i))
+                int nouvelleX = Bateaux[indexBateau].pos[i].x;
+                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+
+                // Vérifier la case de gauche de la case en cours
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i))
                 {
                     genererBateau(indexBateau);
                     return;
                 }
             }
 
+            // Si aucun croisement n'a été détecté, passer au bateau suivant
+            genererBateau(indexBateau + 1);
+        }
+        else if (X - NB_CASES_BATEAU + 1 > 0 && Y - NB_CASES_BATEAU + 1 > 0) // En haut à gauche
+        {
+            // Génération des positions du bateau
+            genererBateauPosition(indexBateau, Y, X, -1, -1);
+
+            // Vérifier les croisements
             for (int i = 0; i < NB_CASES_BATEAU; i++)
             {
+                int nouvelleX = Bateaux[indexBateau].pos[i].x;
+                int nouvelleY = Bateaux[indexBateau].pos[i].y;
+
                 // Vérifier la case de gauche de la case en cours
-                if (Bateaux[indexBateau - 1].pos[i].x - i == X - i && Bateaux[indexBateau - 1].pos[i].y - i - 1 == Y - i)
+                if (!positionEstVide(0, nouvelleY - 1, nouvelleX + i) || !positionEstVide(0, nouvelleY + 1, nouvelleX + i))
                 {
-                    compteur = compteur + 1;
-                }
-                // Vérifier la case de droite de la case en cours
-                else if (Bateaux[indexBateau - 1].pos[i].x - i == X - i && Bateaux[indexBateau - 1].pos[i].y - i + 1 == Y - i)
-                {
-                    compteur = compteur + 1;
-                }
-                // Vérifier le compteur
-                if (compteur != 2)
-                {
-                    // Remplir le bateau avec ces coordonnées
-                    genererBateauPosition(indexBateau, Y, X, -1, -1);
-                    genererBateau(indexBateau + 1);
+                    genererBateau(indexBateau);
+                    return;
                 }
             }
+
+            // Si aucun croisement n'a été détecté, passer au bateau suivant
+            genererBateau(indexBateau + 1);
         }
         else
         {
@@ -616,26 +587,21 @@ void verifierGagnant(EtatsPossibles &etatPartie)
 void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbTirsJoueur2, EtatsPossibles etatPartie)
 {
     // Vérifier qui a gagné
-    if (etatPartie == victoireJoueur1)
+    switch (etatPartie)
     {
+    case victoireJoueur1:
         // Afficher le message de victoire du joueur 1
         cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueur1 << " tirs ###" << endl;
         cout << "### Joueur 2 " << pseudo2 << " : PERD ###" << endl;
-    }
-    else if (etatPartie == victoireJoueur2)
-    {
+    case victoireJoueur2:
         // Afficher le message de victoire du joueur 2
         cout << "### Joueur 1 " << pseudo1 << " : PERD ###" << endl;
         cout << "### Joueur 2 " << pseudo2 << " : GAGNE en " << nbTirsJoueur2 << " tirs ###" << endl;
-    }
-    else if (etatPartie == abandonJoueur1)
-    {
+    case abandonJoueur1:
         // Afficher le message d'abandon du joueur 1
         cout << "### Joueur 1 " << pseudo1 << " : ABANDON ###" << endl;
         cout << "### Joueur 2 " << pseudo2 << " : GAGNE en " << nbTirsJoueur2 << " tirs ###" << endl;
-    }
-    else if (etatPartie == abandonJoueur2)
-    {
+    case abandonJoueur2:
         // Affficher le message d'abandon du joueur 2
         cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueur1 << " tirs ###" << endl;
         cout << "### Joueur 1 " << pseudo2 << " : ABANDON ###" << endl;
