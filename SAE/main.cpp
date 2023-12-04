@@ -106,11 +106,14 @@ int main(void)
         nouveauTour(nbTirsJoueur1, nbTirsJoueur2, tourJoueur, etatPartie);
 
         // Vérifier si un des joueurs a gagné la partie
-        verifierGagnant(etatPartie);
+        if (etatPartie == enCours)
+        {
+            verifierGagnant(etatPartie);
+        }
 
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
-    } while (!(etatPartie != enCours && tourJoueur == 0));
+    } while (!(etatPartie != enCours && tourJoueur == 0) || etatPartie == abandonJoueur1);
 
     // Si la partie est terminée, afficher le résultat
     afficherResultat(nomJoueur1, nomJoueur2, nbTirsJoueur1, nbTirsJoueur2, etatPartie);
@@ -481,7 +484,21 @@ void nouveauTour(int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur, EtatsPo
     // Saisie-verification avec message d'erreur de la cible du tir par l'utilisisateur
     do
     {
-        cout << "Votre tir (ex. A3) ou abandonner (@@) ? ";
+        if (nbTirsJoueur2 < 1)
+        {
+            cout << "Votre 1er tir (ex. A3) ou abandonner (@@) ? ";
+        }
+        else
+        {
+            if (tourJoueur == 0)
+            {
+                cout << "Votre " << nbTirsJoueur1 + 1 << "eme tir (ex. A3) ou abandonner (@@) ? ";
+            }
+            else
+            {
+                cout << "Votre " << nbTirsJoueur2 + 1 << "eme tir (ex. A3) ou abandonner (@@) ? ";
+            }
+        }
         cin >> action;
 
         // Vérifier l'abandon du joueur
