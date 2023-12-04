@@ -608,5 +608,7 @@ void afficherResultat(string pseudo1, string pseudo2, int nbTirsJoueur1, int nbT
         cout << "### Joueur 1 " << pseudo1 << " : GAGNE en " << nbTirsJoueur1 << " tirs ###" << endl;
         cout << "### Joueur 1 " << pseudo2 << " : ABANDON ###" << endl;
         break;
+    default:
+        break;
     }
 }
