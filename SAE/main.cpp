@@ -112,8 +112,17 @@ int main(void)
 
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
-    } while (!(joueur1.etat != enJeu && tourJoueur == 0 ));
+    } while (!((joueur1.etat != enJeu || joueur2.etat != enJeu) && tourJoueur == 0));
 
+    // Nettoyer le terminal
+    effacer();
+
+    // Afficher les informations pour les joueurs
+    afficherEnTete(joueur1, joueur2);
+
+    // Afficher la grille avant le tir du joueur
+    afficherTableau();
+    
     // Si la partie est terminée, afficher le résultat
     afficherResultat(joueur1, joueur2, nbTirsJoueur1, nbTirsJoueur2);
     pause(2);
@@ -269,7 +278,6 @@ void genererBateau(int indexBateau)
             // Génération des positions du bateau
             genererBateauPosition(indexBateau, X, Y, 0, 1);
             break;
-
         case Horizontale:
             if (Y + NB_CASES_BATEAU - 1 > NB_CASES)
             {
@@ -441,7 +449,14 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int &nbTirsJoueur1, int &
     // Saisie-verification avec message d'erreur de la cible du tir par l'utilisisateur
     do
     {
-        cout << "Votre tir (ex. A3) ou abandonner (@@) ? ";
+        if (nbTirsJoueur2 < 1)
+        {
+            cout << "Votre 1er tir (ex. A3) ou abandonner (@@) ? ";
+        }
+        else
+        {
+            cout << "Votre " << nbTirsJoueur2 + 1 << "eme tir (ex. A3) ou abandonner (@@) ? ";
+        }
         cin >> action;
 
         // Vérifier l'abandon du joueur
