@@ -295,17 +295,23 @@ void genererBateau(int indexBateau)
             bool bateauValideHaut = true;
             bool bateauValideBas = true;
 
-            for (int i = 0; i < NB_CASES_BATEAU; i++)
+            if (X + NB_CASES_BATEAU - 1 > NB_CASES || Y + NB_CASES_BATEAU - 1 > NB_CASES) // En bas droite
             {
-                if (X + NB_CASES_BATEAU - 1 > NB_CASES || Y + NB_CASES_BATEAU - 1 > NB_CASES) // En bas droite
+                bateauValideBas = false;
+            }
+            if (X - NB_CASES_BATEAU + 1 > NB_CASES || Y + NB_CASES_BATEAU - 1 > NB_CASES) // En haut droite
+            {
+                bateauValideHaut = false;
+            }
+            if (bateauValideBas || bateauValideHaut)
+            {
+                for (int i = 0; i < NB_CASES_BATEAU; i++)
                 {
+
                     if (!positionEstVide(indexBateau - 1, X + i, Y - i) || X + i > NB_CASES || Y - i < 0)
                     {
                         bateauValideHaut = false;
                     }
-                }
-                if (X - NB_CASES_BATEAU + 1 > NB_CASES || Y + NB_CASES_BATEAU - 1 > NB_CASES) // En haut droite
-                {
                     if (!positionEstVide(indexBateau - 1, X + i, Y + i) || X + i > NB_CASES || Y + i > NB_CASES)
                     {
                         bateauValideBas = false;
