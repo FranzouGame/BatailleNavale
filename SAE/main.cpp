@@ -5,65 +5,19 @@ But : Jouer à la bataille navale
 
 #include <iostream>
 #include "game-tools.h"
+#include "affichage.h"
+#include "bateaux.h"
 using namespace std;
-
-const unsigned short int NB_CASES_BATEAU = 4; // Longueur d'un bateau
-
-// Type énuméré direction
-enum UneDirection
-{
-    Horizontale,
-    Verticale,
-    Diagonale
-};
-
-// Type énuméré servant pour gérer l'état de la partie
-enum EtatsPossibles
-{
-    enJeu,
-    gagne,
-    abandonne
-};
-
-// Déclaration des types
-
-struct UnJoueur
-{
-    string nom;                  // Nom du joueur
-    EtatsPossibles etat = enJeu; // Etat du joueur dans la partie
-};
-struct UneCoordonnee
-{
-    int x = 0; // Abscisse de la coordonnée
-    int y = 0; // Ordonnée de la coordonnée
-};
-
-struct UnBateau
-{
-    UneCoordonnee pos[NB_CASES_BATEAU]; // Un bateau aura NB_CASES_BATEAU coordonnées
-};
 
 const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
 char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
 
 const unsigned short int NB_BATEAUX = 2; // Nombre de bateaux pris en compte
-UnBateau Bateaux[NB_BATEAUX];            // Tableau de Bateaux contenant les NB_BATEAUX de bateaux
-
-int tourJoueur = 0; // Variable stockant à qui est le tour
+UnBateau bateaux[NB_BATEAUX];
 
 // Déclaration des sous-programmes
-void afficherTableau();
-// But : Afficher le tableau de jeu
-void afficherEnTete(UnJoueur player1, UnJoueur player2);
-// But : Afficher l'en-tête lors d'un tir
-void genererBateau(int indexBateau); // Diago a faire, peut être changer la génération des 2 autres pour opti
-// But : Générer les bateaux nécessaires pour la partie
-void afficherBateau();
-// But : Afficher les coordonnées des bateaux à l'écran
 void nouveauTour(UnJoueur &player1, UnJoueur &player2, int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur); // A completer
 // But : Proposer un joueur de tirer et vérifier celui-ci
-void verifBateauToucher(int ligne, int colonne);
-// But : Vérifier si le tir du joueur touche un bateau ou s'il tire dans l'eau
 void verifierGagnant(UnJoueur &player1, UnJoueur &player2);
 // But : Vérifier si un des joueurs gagne ou si la partie continue
 void afficherResultat(UnJoueur player1, UnJoueur player2, int nbTirsJoueur1, int nbTirsJoueur2);
@@ -90,7 +44,7 @@ int main(void)
     indexBateau = 0;
 
     // Génération des bateaux
-    genererBateau(indexBateau);
+    genererBateau(bateaux, indexBateau, NB_BATEAUX, NB_CASES);
 
     // Jouer la partie
     do
@@ -99,10 +53,10 @@ int main(void)
         effacer();
 
         // Afficher les informations pour les joueurs
-        afficherEnTete(joueur1, joueur2);
+        afficherEnTete(joueur1, joueur2, bateaux, NB_BATEAUX, NB_CASES);
 
         // Afficher la grille avant le tir du joueur
-        afficherTableau();
+        afficherTableau(plateauJeu, NB_CASES);
 
         // Inviter le joueur concerné à effectuer son tir, et vérifier le résultat de celui ci
         nouveauTour(joueur1, joueur2, nbTirsJoueur1, nbTirsJoueur2, tourJoueur);
@@ -118,10 +72,10 @@ int main(void)
     effacer();
 
     // Afficher les informations pour les joueurs
-    afficherEnTete(joueur1, joueur2);
+    afficherEnTete(joueur1, joueur2, bateaux, NB_BATEAUX, NB_CASES);
 
     // Afficher la grille avant le tir du joueur
-    afficherTableau();
+    afficherTableau(plateauJeu, NB_CASES);
 
     // Si la partie est terminée, afficher le résultat
     afficherResultat(joueur1, joueur2, nbTirsJoueur1, nbTirsJoueur2);
@@ -130,333 +84,6 @@ int main(void)
 }
 
 // Définition des sous-programmes
-void afficherTableau()
-{
-    cout << endl;
-
-    // Parcourir et remplir le tableau
-    for (int i = 0; i <= NB_CASES + 1; i++) // Parcours des différentes lignes
-    {
-        for (int j = 0; j <= NB_CASES + 1; j++) // parcours des différentes colonnes
-        {
-            if (i == 0 || i == NB_CASES + 1) // Afficher les index lettrés du haut et du bas de la grille, sans en afficher aucun dans les 4 coins
-            {
-                // Afficher les cases des coins vides
-                if (j == 0 || j == NB_CASES + 1)
-                {
-                    cout << " ";
-                }
-                // Afficher les index lettrés
-                else
-                {
-                    cout << char('A' + (j - 1)) << " ";
-                }
-            }
-            // Afficher les indices numérotés
-            else
-            {
-                // Afficher les chiffres
-                if (j == 0 || j == NB_CASES + 1)
-                {
-                    cout << i;
-                }
-                // Remplir les cases non utilisées, qui contiennent un caractère vide en attendant que le jeu se déroule
-                else
-                {
-                    cout << plateauJeu[i][j] << " ";
-                }
-            }
-        }
-        cout << endl;
-    }
-}
-
-void afficherEnTete(UnJoueur player1, UnJoueur player2)
-{
-    // Afficher le nom du jeu
-    cout << "B A T A I L L E   N A V A L E" << endl
-         << endl;
-    // Afficher le but du jeu
-    cout << "Chaque joueur doit couler un bateau de 4 cases (vertical, horizontal ou diagonal)" << endl
-         << endl;
-    // Afficher les 4 coordonnées des 2 bateaux
-    afficherBateau();
-    cout << endl
-         << endl;
-
-    // Afficher le nom du joueur qui doit jouer
-    if (tourJoueur == 0)
-    {
-        // Afficher le nom du joueur 1
-        cout << "Joueur 1 = " << player1.nom << endl
-             << endl;
-    }
-    else
-    {
-        // Afficher le nom du joueur 2
-        cout << "Joueur 2 = " << player2.nom << endl
-             << endl;
-    }
-}
-
-bool positionEstVide(int indexBateau, int X, int Y)
-{
-    for (int i = 0; i < NB_CASES_BATEAU; i++)
-    {
-        if (Bateaux[indexBateau].pos[i].x == X && Bateaux[indexBateau].pos[i].y == Y)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-void genererBateauPosition(int indexBateau, int X, int Y, int incrementX, int incrementY)
-{
-    for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
-    {
-        Bateaux[indexBateau].pos[indiceCaseBateau].x = X + incrementX * indiceCaseBateau;
-        Bateaux[indexBateau].pos[indiceCaseBateau].y = Y + incrementY * indiceCaseBateau;
-    }
-}
-
-void genererBateau(int indexBateau)
-{
-    // Vérifier quel bateau on génère
-    if (NB_BATEAUX <= indexBateau)
-    {
-        return;
-    }
-
-    int indiceDirection;        // Indice permettant de générer la direction du bateau
-    int X;                      // Position horizontale dans le tableau
-    int Y;                      // Position verticale dans le tableau
-    UneDirection directionElue; // Direction choisie aléatoirement
-    bool bateauValide;
-
-    do
-    {
-        // Générer des coordonnées
-        X = random(1, NB_CASES);
-        Y = random(1, NB_CASES);
-
-        // Générer une direction pour le bateau
-        indiceDirection = random(3, 3);
-        // Assigner la direction à la variable concernée
-        switch (indiceDirection)
-        {
-        case 1:
-            directionElue = Verticale;
-            break;
-        case 2:
-            directionElue = Horizontale;
-            break;
-        default:
-            directionElue = Diagonale;
-            break;
-        }
-
-        // Initialiser l'indicateur de validité de la génération du bateau
-        bateauValide = true;
-
-        // Générer un bateau
-        switch (directionElue)
-        {
-        case Verticale:
-            if (X + NB_CASES_BATEAU - 1 > NB_CASES)
-            {
-                X = NB_CASES - NB_CASES_BATEAU + 1;
-            }
-            // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
-            if (indexBateau != 0)
-            {
-                for (int i = 0; i < NB_CASES_BATEAU; i++)
-                {
-                    if (!positionEstVide(indexBateau - 1, X, Y + i))
-                    {
-                        bateauValide = false;
-                        break;
-                    }
-                }
-            }
-
-            // Génération des positions du bateau
-            if (bateauValide)
-            {
-                genererBateauPosition(indexBateau, X, Y, 0, 1);
-            }
-            {
-                genererBateau(indexBateau);
-            }
-            break;
-        case Horizontale:
-            if (Y + NB_CASES_BATEAU - 1 > NB_CASES)
-            {
-                Y = NB_CASES - NB_CASES_BATEAU + 1;
-            }
-            // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
-            if (indexBateau != 0)
-            {
-                for (int i = 0; i < NB_CASES_BATEAU; i++)
-                {
-                    if (!positionEstVide(indexBateau - 1, X + i, Y) || !positionEstVide(indexBateau - 1, X + i, Y + 1) || !positionEstVide(indexBateau - 1, X + i, Y - 1) )
-                    {
-                        bateauValide = false;
-                        break;
-                    }
-                }
-            }
-
-            // Génération des positions du bateau
-            if (bateauValide)
-            {
-                genererBateauPosition(indexBateau, X, Y, 1, 0);
-            }
-            else
-            {
-                genererBateau(indexBateau);
-            }
-            break;
-
-        case Diagonale:
-            // Vérifier si les coordonnées X, Y sont libres avant de générer un bateau
-            bool bateauValideHaut = true;
-            bool bateauValideBas = true;
-
-            if (X + NB_CASES_BATEAU - 1 > NB_CASES || Y + NB_CASES_BATEAU - 1 > NB_CASES) // En bas droite
-            {
-                bateauValideBas = false;
-            }
-            if (X - NB_CASES_BATEAU + 1 > 0 || Y + NB_CASES_BATEAU - 1 > NB_CASES) // En haut droite
-            {
-                bateauValideHaut = false;
-            }
-            if (bateauValideBas || bateauValideHaut)
-            {
-                for (int i = 0; i < NB_CASES_BATEAU; i++)
-                {
-                    // vérifier s'il est possible de générer un bateau dans une des directions
-                    if (!positionEstVide(indexBateau - 1, X - i, Y + i) || !positionEstVide(indexBateau - 1, X - i, Y + i + 1) || !positionEstVide(indexBateau - 1, X - i, Y + i -1)) // En haut à droite
-                    {
-                        bateauValideHaut = false;
-                    }
-                    if (!positionEstVide(indexBateau - 1, X + i ,Y + i) || !positionEstVide(indexBateau - 1, X + i, Y + i + 1) || !positionEstVide(indexBateau - 1, X + i, Y + i - 1)) // En bas à droite
-                    {
-                        bateauValideBas = false;
-                    }
-                }
-            }
-
-            // Générer un bateau en focntion des possibilités
-            if (bateauValideHaut || bateauValideBas)
-            {
-                // Vérifier la/les générations possibles
-                if (bateauValideHaut && bateauValideBas)
-                {
-                    // Choisir aléatoirement entre haut et bas
-                    int choixDirection = random(0, 1);
-                    if (choixDirection == 0)
-                    {
-                        // Génération des positions du bateau en haut à droite
-                        genererBateauPosition(indexBateau, X, Y, 1, -1);
-                    }
-                    else
-                    {
-                        // Génération des positions du bateau en bas à droite
-                        genererBateauPosition(indexBateau, X, Y, 1, 1);
-                    }
-                }
-                else if (bateauValideHaut)
-                {
-                    // Génération des positions du bateau en haut à droite
-                    genererBateauPosition(indexBateau, X, Y, 1, -1);
-                }
-                else
-                {
-                    // Génération des positions du bateau en bas à droite
-                    genererBateauPosition(indexBateau, X, Y, 1, 1);
-                }
-            }
-            else
-            {
-                bateauValide = false;
-            }
-            break;
-        }
-
-    } while (!bateauValide);
-
-    // Générer le bateau suivant
-    genererBateau(indexBateau + 1);
-}
-
-void verifBateauToucher(int ligne, int colonne)
-{
-    // Variables Locales
-    int bateauToucher = 0; // 0 = non, 1 = joueur 1, 2 = joueur2
-
-    // Parcourir les bateaux
-    for (int indiceBateau = 0; indiceBateau < NB_BATEAUX; indiceBateau++)
-    {
-        // Parcourir les coordonnées de chaque bateau
-        for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
-        {
-            // Vérifier si le tir du joueur touche un bateau
-            if (Bateaux[indiceBateau].pos[indiceCaseBateau].x == ligne && Bateaux[indiceBateau].pos[indiceCaseBateau].y == colonne)
-            {
-                // Vérifier si le bateau touché est le bateau 1
-                if (indiceBateau == 0)
-                {
-                    bateauToucher = 1;
-                }
-                // Vérifier si le bateau touché est le bateau 2
-                else
-                {
-                    bateauToucher = 2;
-                }
-                break;
-            }
-        }
-        // Sortir de la boucle si un bateau est touché avant la fin de celle ci
-        if (bateauToucher == 1 || bateauToucher == 2)
-        {
-            break;
-        }
-    }
-
-    // Mettre à jour la grille en fonction du tir du joueur
-    // Afficher un point si le joueur tire dans l'eau
-    if (bateauToucher == 0)
-    {
-        plateauJeu[ligne][colonne] = '.';
-    }
-    // Afficher un O si le joueur touche le bateau 1
-    else if (bateauToucher == 1)
-    {
-        plateauJeu[ligne][colonne] = 'O';
-    }
-    // Afficher un X si le joueur touche le bateau 2
-    else if (bateauToucher == 2)
-    {
-        plateauJeu[ligne][colonne] = 'X';
-    }
-}
-
-void afficherBateau()
-{
-    // Parcours des 2 bateaux du tableau Bateaux
-    for (int indiceBateau = 0; indiceBateau < NB_BATEAUX; indiceBateau++)
-    {
-        // Afficher l'en-tête de la ligne
-        cout << "Bateau " << (indiceBateau + 1) << (indiceBateau == 0 ? " (O) " : " (X) ") << " = ";
-        // Afficher les coordonnées de tous les points du bateau
-        for (int coordBateau = 0; coordBateau < NB_CASES_BATEAU; coordBateau++)
-        {
-            cout << " (" << char(Bateaux[indiceBateau].pos[coordBateau].y + 64) << "," << Bateaux[indiceBateau].pos[coordBateau].x << ")";
-        }
-        cout << endl;
-    }
-}
 
 void nouveauTour(UnJoueur &player1, UnJoueur &player2, int &nbTirsJoueur1, int &nbTirsJoueur2, int tourJoueur)
 {
@@ -508,7 +135,7 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int &nbTirsJoueur1, int &
             if (action.length() == 2 && colonne > 0 && colonne < 10 && ligne > 0 && ligne < 10)
             {
                 // Vérifier si le tir du joueur touche un bateau
-                verifBateauToucher(ligne, colonne);
+                verifBateauToucher(ligne, colonne, NB_BATEAUX, NB_CASES);
                 // Mettre à jour l'indicateur de validité du tir
                 valideSaisie = true;
 
@@ -540,7 +167,7 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int &nbTirsJoueur1, int &
     } while (valideSaisie == false);
 }
 
-void verifierGagnant(UnJoueur &player1, UnJoueur &player2)
+void verifierGagnant(UnBateau Bato[], char grille[][NB_CASES], UnJoueur &player1, UnJoueur &player2, const unsigned short int NB_BATEAUX)
 {
     // Variables locales
     int toucheBateau1 = 0;             // Nombre de tirs touchant le bateau 1
@@ -554,15 +181,15 @@ void verifierGagnant(UnJoueur &player1, UnJoueur &player2)
         for (int indiceCaseBateau = 0; indiceCaseBateau < NB_CASES_BATEAU; indiceCaseBateau++)
         {
             // Récupérer la coordonnée du bateau en cours
-            UneCoordonnee coordEnVerification = Bateaux[indiceBateau].pos[indiceCaseBateau];
+            UneCoordonnee coordEnVerification = Bato[indiceBateau].pos[indiceCaseBateau];
 
             // Vérifier si le nombre de cases touchées du bateau 1
-            if (plateauJeu[coordEnVerification.x][coordEnVerification.y] == 'O')
+            if (grille[coordEnVerification.x][coordEnVerification.y] == 'O')
             {
                 toucheBateau1++;
             }
             // Vérifier si le nombre de cases touchées du bateau 2
-            else if (plateauJeu[coordEnVerification.x][coordEnVerification.y] == 'X')
+            else if (grille[coordEnVerification.x][coordEnVerification.y] == 'X')
             {
                 toucheBateau2++;
             }
