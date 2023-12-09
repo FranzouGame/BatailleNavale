@@ -11,8 +11,7 @@ enum UneDirection
     Diagonale
 };
 
-
-void afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[] , const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer)
+void afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer, bool afficheBateaux)
 {
     // Afficher le nom du jeu
     cout << "B A T A I L L E   N A V A L E" << endl
@@ -20,8 +19,9 @@ void afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[] , const 
     // Afficher le but du jeu
     cout << "Chaque joueur doit couler un bateau de 4 cases (vertical, horizontal ou diagonal)" << endl
          << endl;
-    // Afficher les 4 coordonnées des 2 bateaux
-    afficherBateau(boat, NB_BATEAUX, NB_CASES);
+    // Afficher les 4 coordonnées des 2 bateaux si les joueurs le souhaitent
+
+    afficherBateau(boat, NB_BATEAUX, NB_CASES, afficheBateaux);
     cout << endl
          << endl;
 
@@ -81,23 +81,25 @@ void afficherTableau(char grille[][TAILLE_TAB], int TAILLE_TAB)
     }
 }
 
-void afficherBateau(UnBateau boats[] , const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES)
+void afficherBateau(UnBateau boats[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, bool afficheBateaux)
 {
     // Parcours des 2 bateaux du tableau Bateaux
     for (int indiceBateau = 0; indiceBateau < NB_BATEAUX; indiceBateau++)
     {
         // Afficher l'en-tête de la ligne
-        cout << "Bateau " << (indiceBateau + 1) << (indiceBateau == 0 ? " (O) " : " (X) ") << " = ";
+        cout << "Bateau " << (indiceBateau + 1) << (indiceBateau == 0 ? " (O) " : " (X) ") << (afficheBateaux?" = ":" ");
         // Afficher les coordonnées de tous les points du bateau
-        for (int coordBateau = 0; coordBateau < NB_CASES_BATEAU; coordBateau++)
+        if (afficheBateaux)
         {
-            cout << " (" << char(boats[indiceBateau].pos[coordBateau].y + 64) << "," << boats[indiceBateau].pos[coordBateau].x << ")";
+            for (int coordBateau = 0; coordBateau < NB_CASES_BATEAU; coordBateau++)
+            {
+                cout << " (" << char(boats[indiceBateau].pos[coordBateau].y + 64) << "," << boats[indiceBateau].pos[coordBateau].x << ")";
+            }
+            
         }
         cout << endl;
     }
 }
-
-
 
 bool positionEstVide(UnBateau tabBateaux[], int indexBateau, int X, int Y)
 {
@@ -291,7 +293,7 @@ void genererBateau(UnBateau bateau[], int indexBateau, const unsigned short int 
     genererBateau(bateau, indexBateau + 1, NB_BATEAUX, NB_CASES);
 }
 
-void verifBateauToucher(UnBateau Bat[], char grille[][TAILLE_TAB], int ligne, int colonne, const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES)
+void verifBateauToucher(UnBateau Bat[], char grille[][TAILLE_TAB], int ligne, int colonne, const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer, UnJoueur &player1, UnJoueur &player2)
 {
     // Variables Locales
     int bateauToucher = 0; // 0 = non, 1 = joueur 1, 2 = joueur2
@@ -335,10 +337,74 @@ void verifBateauToucher(UnBateau Bat[], char grille[][TAILLE_TAB], int ligne, in
     else if (bateauToucher == 1)
     {
         grille[ligne][colonne] = 'O';
+        if (turnPlayer == 0)
+        {
+            player1.toucheBateau1++;
+        }
+        else
+        {
+            player2.toucheBateau1++;
+        }
     }
     // Afficher un X si le joueur touche le bateau 2
     else if (bateauToucher == 2)
     {
         grille[ligne][colonne] = 'X';
+        if (turnPlayer == 0)
+        {
+            player1.toucheBateau2++;
+        }
+        else
+        {
+            player2.toucheBateau2++;
+        }
     }
 }
+
+void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBateaux)
+{
+    // Variable locale
+    char retourJoueur; // Retour du joueur quant à l'affichage des règles
+    bool valideSaisie; // indicateur de validité de la saisie
+
+    // Traitements
+    // Initialisation de l'indicateur
+    valideSaisie = true;
+
+    // Saisie du nom des joueurs
+    cout << "Quel est le nom du joueur 1 : ";
+    cin >> player1.nom;
+    cout << "Quel est le nom du joueur 2 : ";
+    cin >> player2.nom;
+
+    // Saisie de la volonté d'afficher les bateaux
+    do
+    {
+        if (valideSaisie == false)
+        {
+            // Afficher le message d'erreur
+            afficherTexteEnCouleur("Saisie incorrecte, Recommencez !", rouge, true);
+        }
+
+        // Saisie de la volonté
+        cout << "Voulez-vous que les coordonnées des bateaux soient affichées ? ('O'/'N')";
+        cin >> retourJoueur;
+
+        // Vérification de la saisie
+        if (retourJoueur == 'n' || retourJoueur == 'o' || retourJoueur == 'N' || retourJoueur == 'O')
+        {
+            valideSaisie = true;
+            // Attribution de la volonté à un indicateur
+            if (retourJoueur == 'n' || retourJoueur == 'N')
+            {
+                afficheBateaux = false;
+            }
+            else // Inutile il me semble
+            {
+                afficheBateaux = true;
+            }
+        }
+    } while (valideSaisie == false);
+}
+
+;

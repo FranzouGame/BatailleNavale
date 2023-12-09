@@ -18,9 +18,11 @@ enum EtatsPossibles
 
 struct UnJoueur
 {
-    string nom;                    // Nom du joueur
-    EtatsPossibles etat = enJeu;   // Etat du joueur dans la partie
-    unsigned short int nbTirs = 0; // Nombre de tirs du joueur
+    string nom;                       // Nom du joueur
+    EtatsPossibles etat = enJeu;      // Etat du joueur dans la partie
+    unsigned short int nbTirs = 0;    // Nombre de tirs du joueur
+    unsigned short int toucheBateau1; // Nombre de tirs touchant le bateau 1
+    unsigned short int toucheBateau2; // Nombre de tirs touchant le bateau 2
 };
 
 struct UneCoordonnee
@@ -34,19 +36,22 @@ struct UnBateau
     UneCoordonnee pos[NB_CASES_BATEAU]; // Un bateau aura NB_CASES_BATEAU coordonnées
 };
 
-void afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer);
+void afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer,bool afficheBateaux);
 // But : Afficher l'en-tête lors d'un tir
 
 void afficherTableau(char grille[][TAILLE_TAB], int TAILLE_TAB);
 // But : Afficher le tableau de jeu
 
-void afficherBateau(UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES);
+void afficherBateau(UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES,bool afficheBateaux);
 // But : Afficher les coordonnées des bateaux à l'écran
 
 void genererBateau(UnBateau bateau[], int indexBateau, const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES); // Diago a faire, peut être changer la génération des 2 autres pour opti
 // But : Générer les bateaux nécessaires pour la partie
 
-void verifBateauToucher(UnBateau Bat[], char grille[][TAILLE_TAB], int ligne, int colonne, const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES);
+void verifBateauToucher(UnBateau Bat[], char grille[][TAILLE_TAB], int ligne, int colonne, const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer, UnJoueur &player1, UnJoueur &player2);
 // But : Vérifier si le tir du joueur touche un bateau ou s'il tire dans l'eau
+
+void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBateaux);
+// But : lors de la saisie de début de patrtie, demande aux joueurs leurs noms et s'ils veulent afficher les coordonnées des bateaux
 
 #endif // MODULE_H
