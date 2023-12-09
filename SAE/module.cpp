@@ -407,9 +407,9 @@ void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBatea
 void resetPlateau(char grille[][TAILLE_TAB],unsigned short int NB_CASES)
 {
     // Réinitialiser toutes les cases du tableau
-    for (unsigned short int ligne = 0; ligne < NB_CASES; ligne++)
+    for (unsigned short int ligne = 0; ligne < NB_CASES + 1; ligne++)
     {
-        for(unsigned short int colonne = 0; colonne < NB_CASES; colonne++)
+        for(unsigned short int colonne = 0; colonne < NB_CASES + 1; colonne++)
         {
             grille[ligne][colonne] = '\0';
         }

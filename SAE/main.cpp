@@ -20,23 +20,24 @@ int main(void)
 {
 
     // Variables
-    UnJoueur joueur1;     // Informations du joueur 1
-    UnJoueur joueur2;     // Informations du joueur 2
-    int indexBateau;      // Index du bateau en cours de traitement dans le tableau des bateaux
-    int tourJoueur;       // Joueur qui doit jouer
-    bool affichageRegles; // Indicateur de la volonté des joueurs à afficher les règles
-    string rejouerPartie;
-    const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
-    char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
-
+    UnJoueur joueur1;                        // Informations du joueur 1
+    UnJoueur joueur2;                        // Informations du joueur 2
+    int indexBateau;                         // Index du bateau en cours de traitement dans le tableau des bateaux
+    int tourJoueur;                          // Joueur qui doit jouer
+    bool affichageRegles;                    // Indicateur de la volonté des joueurs à afficher les règles
+    string rejouerPartie;                    // Indicateur de la volonté des joueurs à rejouer la partie
+    const unsigned short int NB_CASES = 9;   // Taille du tableau horizontalement et verticalement
+    char plateauJeu[NB_CASES][NB_CASES];     // Tableau contenant le plateau de jeu
     const unsigned short int NB_BATEAUX = 2; // Nombre de bateaux pris en compte
-    UnBateau bateaux[NB_BATEAUX];
+    UnBateau bateaux[NB_BATEAUX];            // Tableau contenant les bateaux
+    int nbTirsTotal;                         // Nombre total de tirs des 2 joueurs
 
     // Initialisation de la partie
     // Initialisation des variables
     indexBateau = 0;
     tourJoueur = 0;
     affichageRegles = true;
+    nbTirsTotal = 0;
 
     // Réinitialiser le plateau de jeu
     resetPlateau(plateauJeu, NB_CASES);
@@ -50,6 +51,9 @@ int main(void)
     // Jouer la partie
     do
     {
+        // Compter le nombre total de tirs
+        nbTirsTotal = joueur1.nbTirs + joueur2.nbTirs;
+
         // Nettoyer le terminal entre les 2 tours
         effacer();
 
@@ -62,8 +66,11 @@ int main(void)
         // Inviter le joueur concerné à effectuer son tir, et vérifier le résultat de celui ci
         nouveauTour(joueur1, joueur2, tourJoueur, bateaux, plateauJeu, NB_BATEAUX, NB_CASES);
 
-        // Vérifier si un des joueurs a gagné la partie
-        verifierGagnant(bateaux, plateauJeu, joueur1, joueur2, NB_BATEAUX);
+        // Vérifier si un des joueurs a gagné la partie si suffisamenent de tirs on été proférés
+        if (nbTirsTotal >= 4)
+        {
+            verifierGagnant(bateaux, plateauJeu, joueur1, joueur2, NB_BATEAUX);
+        }
 
         // Changement du tours entre les deux joueurs
         tourJoueur = (tourJoueur + 1) % 2;
@@ -80,9 +87,10 @@ int main(void)
 
     // Si la partie est terminée, afficher le résultat
     afficherResultat(joueur1, joueur2);
+    cout << endl;
 
     // Demander au joueur s'il veut rejouer
-    cout << "Souhaitez-vous en rejouer une ? ";
+    cout << "Souhaitez-vous rejouer une partie ? (O/N) ";
     cin >> rejouerPartie;
 
     // Vérifier la saisie
