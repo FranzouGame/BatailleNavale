@@ -26,21 +26,20 @@ int main(void)
 {
 
     // Variables
-    UnJoueur joueur1;      // Informations du joueur 1
-    UnJoueur joueur2;      // Informations du joueur 2
-    int indexBateau;       // Index du bateau en cours de traitement dans le tableau des bateaux
-    int tourJoueur;        // Joueur qui doit jouer
-
-    // Saisie du nom des joueurs
-    cout << "Quel est le nom du joueur 1 : ";
-    cin >> joueur1.nom;
-    cout << "Quel est le nom du joueur 2 : ";
-    cin >> joueur2.nom;
+    UnJoueur joueur1;            // Informations du joueur 1
+    UnJoueur joueur2;            // Informations du joueur 2
+    int indexBateau;             // Index du bateau en cours de traitement dans le tableau des bateaux
+    int tourJoueur;              // Joueur qui doit jouer
+    bool affichageRegles; // Indicateur de la volonté des joueurs à afficher les règles
 
     // Initialisation de la partie
     // Initialisation des variables
     indexBateau = 0;
     tourJoueur = 0;
+    affichageRegles = true;
+
+    // Saisie du nom des joueurs
+    saisieInformations(joueur1, joueur2, affichageRegles);
 
     // Génération des bateaux
     genererBateau(bateaux, indexBateau, NB_BATEAUX, NB_CASES);
@@ -52,14 +51,14 @@ int main(void)
         effacer();
 
         // Afficher les informations pour les joueurs
-        afficherEnTete(joueur1, joueur2, bateaux, NB_BATEAUX, NB_CASES, tourJoueur);
+        afficherEnTete(joueur1, joueur2, bateaux, NB_BATEAUX, NB_CASES, tourJoueur, affichageRegles);
 
         // Afficher la grille avant le tir du joueur
         afficherTableau(plateauJeu, NB_CASES);
 
         // Inviter le joueur concerné à effectuer son tir, et vérifier le résultat de celui ci
         nouveauTour(joueur1, joueur2, tourJoueur);
-        
+
         // Vérifier si un des joueurs a gagné la partie
         verifierGagnant(bateaux, plateauJeu, joueur1, joueur2, NB_BATEAUX);
 
@@ -71,14 +70,13 @@ int main(void)
     effacer();
 
     // Afficher les informations pour les joueurs
-    afficherEnTete(joueur1, joueur2, bateaux, NB_BATEAUX, NB_CASES, tourJoueur);
+    afficherEnTete(joueur1, joueur2, bateaux, NB_BATEAUX, NB_CASES, tourJoueur, affichageRegles);
 
     // Afficher la grille avant le tir du joueur
     afficherTableau(plateauJeu, NB_CASES);
 
     // Si la partie est terminée, afficher le résultat
     afficherResultat(joueur1, joueur2);
-    pause(2);
     return 0;
 }
 
@@ -134,7 +132,7 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur)
             if (action.length() == 2 && colonne > 0 && colonne < 10 && ligne > 0 && ligne < 10)
             {
                 // Vérifier si le tir du joueur touche un bateau
-                verifBateauToucher(bateaux, plateauJeu, ligne, colonne, NB_BATEAUX, NB_CASES);
+                verifBateauToucher(bateaux, plateauJeu, ligne, colonne, NB_BATEAUX, NB_CASES, tourJoueur, player1, player2);
                 // Mettre à jour l'indicateur de validité du tir
                 valideSaisie = true;
 
@@ -221,7 +219,7 @@ void afficherResultat(UnJoueur player1, UnJoueur player2)
         else
         {
             // Afficher le message de victoire du joueur 1
-            cout << "### Joueur 1 " << player1.nom << " : GAGNE en " << player1.nbTirs << " tirs ###" << endl;
+            cout << "### Joueur 1 " << player1.nom << " : GAGNE en " << player1.nbTirs << " tirs, dont " << player1.toucheBateau1 << (player1.toucheBateau1 == 1 ? " tir" : " tirs") << " sur le bateau 1 ###" << endl;
             cout << "### Joueur 2 " << player2.nom << " : PERD ###" << endl;
         }
         break;
@@ -235,18 +233,20 @@ void afficherResultat(UnJoueur player1, UnJoueur player2)
         else
         {
             cout << "### Joueur 1 " << player1.nom << " : ABANDON ###" << endl;
-            cout << "### Joueur 2 " << player2.nom << " : GAGNE en " << player2.nbTirs << " tirs ###" << endl;
+            cout << "### Joueur 2 " << player2.nom << " : GAGNE en " << player2.nbTirs << "tirs, dont " << player2.toucheBateau2 << (player2.toucheBateau2 == 1 ? " tir" : " tirs") << " sur le bateau 2 ###" << endl;
         }
         break;
     case enJeu:
+        // Afficher le message de victoire du joueur 2
         if (player2.etat == gagne)
         {
             cout << "### Joueur 1 " << player1.nom << " : PERD ###" << endl;
-            cout << "### Joueur 2 " << player2.nom << " : GAGNE en " << player2.nbTirs << " tirs ###" << endl;
+            cout << "### Joueur 2 " << player2.nom << " : GAGNE en " << player2.nbTirs << " tirs, dont " << player2.toucheBateau2 << (player2.toucheBateau2 == 1 ? " tir" : " tirs") << " sur le bateau 2 ###" << endl;
         }
+        // Afficher l'abandon du joueur 2
         if (player2.etat == abandonne)
         {
-            cout << "### Joueur 1 " << player1.nom << " : GAGNE en " << player1.nbTirs << " tirs ###" << endl;
+            cout << "### Joueur 1 " << player1.nom << " : GAGNE en " << player1.nbTirs << " tirs, dont " << player1.toucheBateau1 << (player1.toucheBateau1 == 1 ? " tir" : " tirs") << " sur le bateau 1 ###" << endl;
             cout << "### Joueur 2 " << player2.nom << " : ABANDON ###" << endl;
         }
     }
