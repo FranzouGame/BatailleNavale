@@ -8,16 +8,10 @@ But : Jouer à la bataille navale
 #include "module.h"
 using namespace std;
 
-const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
-char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
-
-const unsigned short int NB_BATEAUX = 2; // Nombre de bateaux pris en compte
-UnBateau bateaux[NB_BATEAUX];
-
 // Déclaration des sous-programmes
-void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur); // A completer
+void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur, UnBateau tabBateaux[], char grille[][TAILLE_TAB], int nbBateaux, int nbCases); // A completer
 // But : Proposer un joueur de tirer et vérifier celui-ci
-void verifierGagnant(UnBateau Bato[], char grille[][NB_CASES], UnJoueur &player1, UnJoueur &player2, const unsigned short int NB_BATEAUX);
+void verifierGagnant(UnBateau Bato[], char grille[][TAILLE_TAB], UnJoueur &player1, UnJoueur &player2, const unsigned short int NB_BATEAUX);
 // But : Vérifier si un des joueurs gagne ou si la partie continue
 void afficherResultat(UnJoueur player1, UnJoueur player2);
 // But : Afficher le résultat de la partie
@@ -26,17 +20,26 @@ int main(void)
 {
 
     // Variables
-    UnJoueur joueur1;            // Informations du joueur 1
-    UnJoueur joueur2;            // Informations du joueur 2
-    int indexBateau;             // Index du bateau en cours de traitement dans le tableau des bateaux
-    int tourJoueur;              // Joueur qui doit jouer
+    UnJoueur joueur1;     // Informations du joueur 1
+    UnJoueur joueur2;     // Informations du joueur 2
+    int indexBateau;      // Index du bateau en cours de traitement dans le tableau des bateaux
+    int tourJoueur;       // Joueur qui doit jouer
     bool affichageRegles; // Indicateur de la volonté des joueurs à afficher les règles
+    string rejouerPartie;
+    const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
+    char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
+
+    const unsigned short int NB_BATEAUX = 2; // Nombre de bateaux pris en compte
+    UnBateau bateaux[NB_BATEAUX];
 
     // Initialisation de la partie
     // Initialisation des variables
     indexBateau = 0;
     tourJoueur = 0;
     affichageRegles = true;
+
+    // Réinitialiser le plateau de jeu
+    resetPlateau(plateauJeu, NB_CASES);
 
     // Saisie du nom des joueurs
     saisieInformations(joueur1, joueur2, affichageRegles);
@@ -57,7 +60,7 @@ int main(void)
         afficherTableau(plateauJeu, NB_CASES);
 
         // Inviter le joueur concerné à effectuer son tir, et vérifier le résultat de celui ci
-        nouveauTour(joueur1, joueur2, tourJoueur);
+        nouveauTour(joueur1, joueur2, tourJoueur, bateaux, plateauJeu, NB_BATEAUX, NB_CASES);
 
         // Vérifier si un des joueurs a gagné la partie
         verifierGagnant(bateaux, plateauJeu, joueur1, joueur2, NB_BATEAUX);
@@ -77,12 +80,25 @@ int main(void)
 
     // Si la partie est terminée, afficher le résultat
     afficherResultat(joueur1, joueur2);
+
+    // Demander au joueur s'il veut rejouer
+    cout << "Souhaitez-vous en rejouer une ? ";
+    cin >> rejouerPartie;
+
+    // Vérifier la saisie
+    if (rejouerPartie == "o" || rejouerPartie == "O")
+    {
+        // Effacer le contenu du terminal puis rejouer la partie
+        effacer();
+        main();
+    }
+
     return 0;
 }
 
 // Définition des sous-programmes
 
-void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur)
+void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur, UnBateau tabBateaux[], char grille[][TAILLE_TAB], int nbBateaux, int nbCases)
 {
     // Variables locales
     string action;     // Stockage du tir du joueur, ou de son abandon
@@ -132,7 +148,7 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur)
             if (action.length() == 2 && colonne > 0 && colonne < 10 && ligne > 0 && ligne < 10)
             {
                 // Vérifier si le tir du joueur touche un bateau
-                verifBateauToucher(bateaux, plateauJeu, ligne, colonne, NB_BATEAUX, NB_CASES, tourJoueur, player1, player2);
+                verifBateauToucher(tabBateaux, grille, ligne, colonne, nbBateaux, nbCases, tourJoueur, player1, player2);
                 // Mettre à jour l'indicateur de validité du tir
                 valideSaisie = true;
 
@@ -164,7 +180,7 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur)
     } while (valideSaisie == false);
 }
 
-void verifierGagnant(UnBateau Bato[], char grille[][NB_CASES], UnJoueur &player1, UnJoueur &player2, const unsigned short int NB_BATEAUX)
+void verifierGagnant(UnBateau Bato[], char grille[][TAILLE_TAB], UnJoueur &player1, UnJoueur &player2, const unsigned short int NB_BATEAUX)
 {
     // Variables locales
     int toucheBateau1 = 0;             // Nombre de tirs touchant le bateau 1
