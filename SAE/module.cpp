@@ -386,6 +386,7 @@ void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBatea
             afficherTexteEnCouleur("Saisie incorrecte, Recommencez !", rouge, true);
         }
 
+        valideSaisie = false;
         // Saisie de la volonté
         cout << "Voulez-vous que les coordonnées des bateaux soient affichées ? ('O'/'N')";
         cin >> retourJoueur;
@@ -399,12 +400,18 @@ void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBatea
             {
                 afficheBateaux = false;
             }
-            else // Inutile il me semble
-            {
-                afficheBateaux = true;
-            }
         }
     } while (valideSaisie == false);
 }
 
-;
+void resetPlateau(char grille[][TAILLE_TAB],unsigned short int NB_CASES)
+{
+    // Réinitialiser toutes les cases du tableau
+    for (unsigned short int ligne = 0; ligne < NB_CASES; ligne++)
+    {
+        for(unsigned short int colonne = 0; colonne < NB_CASES; colonne++)
+        {
+            grille[ligne][colonne] = '\0';
+        }
+    }
+}

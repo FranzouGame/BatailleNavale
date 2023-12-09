@@ -54,4 +54,7 @@ void verifBateauToucher(UnBateau Bat[], char grille[][TAILLE_TAB], int ligne, in
 void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBateaux);
 // But : lors de la saisie de début de patrtie, demande aux joueurs leurs noms et s'ils veulent afficher les coordonnées des bateaux
 
+void resetPlateau(char grille[][TAILLE_TAB],unsigned short int NB_CASES);
+// But : Reinitialiser la grille de jeu grille de taille NB_CASES 
+
 #endif // MODULE_H
