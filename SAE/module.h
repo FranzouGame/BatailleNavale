@@ -42,7 +42,7 @@ void afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[], const u
 void afficherTableau(char grille[][TAILLE_TAB], int TAILLE_TAB);
 // But : Afficher le tableau de jeu
 
-void afficherBateau(UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES,bool afficheBateaux);
+void afficherBateau(UnBateau boat[], const unsigned short int NB_BATEAUX, bool afficheBateaux);
 // But : Afficher les coordonnées des bateaux à l'écran
 
 void genererBateau(UnBateau bateau[], int indexBateau, const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES); // Diago a faire, peut être changer la génération des 2 autres pour opti
@@ -56,5 +56,12 @@ void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBatea
 
 void resetPlateau(char grille[][TAILLE_TAB],unsigned short int NB_CASES);
 // But : Reinitialiser la grille de jeu grille de taille NB_CASES 
+
+void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur, UnBateau tabBateaux[], char grille[][TAILLE_TAB], int nbBateaux, int nbCases); // A completer
+// But : Proposer un joueur de tirer et vérifier celui-ci
+void verifierGagnant(UnBateau Bato[], char grille[][TAILLE_TAB], UnJoueur &player1, UnJoueur &player2, const unsigned short int NB_BATEAUX);
+// But : Vérifier si un des joueurs gagne ou si la partie continue
+void afficherResultat(UnJoueur player1, UnJoueur player2);
+// But : Afficher le résultat de la partie
 
 #endif // MODULE_H
