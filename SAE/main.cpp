@@ -10,10 +10,21 @@ using namespace std;
 
 // Déclaration des sous-programmes
 
+void jouerPartie();
+// But : jouer une partie
 
 int main(void)
 {
 
+    // jouer la partie 
+    jouerPartie();    
+
+    return 0;
+}
+
+// Définition des sous-programmes
+void jouerPartie()
+{
     // Variables
     UnJoueur joueur1;     // Informations du joueur 1
     UnJoueur joueur2;     // Informations du joueur 2
@@ -22,7 +33,7 @@ int main(void)
     bool affichageRegles; // Indicateur de la volonté des joueurs à afficher les règles
     char rejouerPartie;
     const unsigned short int NB_CASES = 9; // Taille du tableau horizontalement et verticalement
-    char plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
+    UneCase plateauJeu[NB_CASES][NB_CASES];   // Tableau contenant le plateau de jeu
 
     const unsigned short int NB_BATEAUX = 2; // Nombre de bateaux pris en compte
     UnBateau bateaux[NB_BATEAUX];
@@ -85,12 +96,7 @@ int main(void)
     {
         // Effacer le contenu du terminal puis rejouer la partie
         effacer();
-        main();
+        jouerPartie();
     }
-
-    return 0;
 }
-
-// Définition des sous-programmes
-
 
