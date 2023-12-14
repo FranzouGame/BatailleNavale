@@ -20,6 +20,7 @@ struct UnJoueur
 {
     string nom;                       // Nom du joueur
     EtatsPossibles etat = enJeu;      // Etat du joueur dans la partie
+    Couleur couleurChoisie;           // Couleur choisie par le joueur
     unsigned short int nbTirs = 0;    // Nombre de tirs du joueur
     unsigned short int toucheBateau1; // Nombre de tirs touchant le bateau 1
     unsigned short int toucheBateau2; // Nombre de tirs touchant le bateau 2
@@ -39,11 +40,10 @@ struct UnBateau
 struct UneCase
 {
     char representation = '\0'; // Réprésentation de la case
-    Couleur couleur;     // Couleur à afficher
+    Couleur couleur;            // Couleur à afficher
 };
 
-void
-afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer, bool afficheBateaux);
+void afficherEnTete(UnJoueur player1, UnJoueur player2, UnBateau boat[], const unsigned short int NB_BATEAUX, const unsigned short int NB_CASES, int turnPlayer, bool afficheBateaux);
 // But : Afficher l'en-tête lors d'un tir
 
 void afficherTableau(UneCase grille[][TAILLE_TAB], int TAILLE_TAB);

@@ -131,7 +131,7 @@ void genererBateau(UnBateau bateau[], int indexBateau, const unsigned short int 
     UneDirection directionElue; // Direction choisie aléatoirement
     bool bateauValide;          // Indicateur de validité d'un bateau
     const unsigned short int INDICE_MIN_BATEAU = 1;
-    
+
     // Vérifier quel bateau on génère
     if (NB_BATEAUX <= indexBateau)
     {
@@ -301,7 +301,7 @@ void verifBateauToucher(UnBateau Bat[], UneCase grille[][TAILLE_TAB], int ligne,
     int bateauToucher = 0;                        // 0 = non, 1 = joueur 1, 2 = joueur2
     const unsigned short int INDICE_BATEAU_1 = 1; // Indice du bateau 1
     const unsigned short int INDICE_BATEAU_2 = 2; // Indice du bateau 1
-    const unsigned short int INDICE_0 = 0;            // Indice 0
+    const unsigned short int INDICE_0 = 0;        // Indice 0
 
     // Parcourir les bateaux
     for (int indiceBateau = INDICE_0; indiceBateau < NB_BATEAUX; indiceBateau++)
@@ -337,54 +337,42 @@ void verifBateauToucher(UnBateau Bat[], UneCase grille[][TAILLE_TAB], int ligne,
     if (bateauToucher == INDICE_0)
     {
         grille[ligne][colonne].representation = '.';
-        if(turnPlayer == 0)
+        if (turnPlayer == 0)
         {
-            grille[ligne][colonne].couleur = rouge;
+            grille[ligne][colonne].couleur = player1.couleurChoisie;
         }
         else
         {
-            grille[ligne][colonne].couleur = bleu;
+            grille[ligne][colonne].couleur = player2.couleurChoisie;
         }
     }
     // Afficher un O si le joueur touche le bateau 1
     else if (bateauToucher == INDICE_BATEAU_1)
     {
         grille[ligne][colonne].representation = 'O';
-        if(turnPlayer == 0)
+        if (turnPlayer == 0)
         {
-            grille[ligne][colonne].couleur = rouge;
+            grille[ligne][colonne].couleur = player1.couleurChoisie;
+            player1.toucheBateau2++;
         }
         else
         {
-            grille[ligne][colonne].couleur = bleu;
-        }
-        if (turnPlayer == INDICE_0)
-        {
-            player1.toucheBateau1++;
-        }
-        else
-        {
-            player2.toucheBateau1++;
+            grille[ligne][colonne].couleur = player2.couleurChoisie;
+            player2.toucheBateau2++;
         }
     }
     // Afficher un X si le joueur touche le bateau 2
     else if (bateauToucher == INDICE_BATEAU_2)
     {
         grille[ligne][colonne].representation = 'X';
-        if(turnPlayer == 0)
+        if (turnPlayer == 0)
         {
-            grille[ligne][colonne].couleur = rouge;
-        }
-        else
-        {
-            grille[ligne][colonne].couleur = bleu;
-        }
-        if (turnPlayer == INDICE_0)
-        {
+            grille[ligne][colonne].couleur = player1.couleurChoisie;
             player1.toucheBateau2++;
         }
         else
         {
+            grille[ligne][colonne].couleur = player2.couleurChoisie;
             player2.toucheBateau2++;
         }
     }
@@ -405,6 +393,70 @@ void saisieInformations(UnJoueur &player1, UnJoueur &player2, bool &afficheBatea
     cin >> player1.nom;
     cout << "Quel est le nom du joueur 2 : ";
     cin >> player2.nom;
+
+    for (int i = 0; i < 2; i++)
+    {
+        string couleurChoisie;
+
+        cout << "Quelle couleur pour le joueur " << i + 1 << " ? ";
+        cin >> couleurChoisie;
+
+        if (couleurChoisie == "R" || couleurChoisie == "Rouge" || couleurChoisie == "rouge")
+        {
+            if (i == 0)
+            {
+                player1.couleurChoisie = rouge;
+            }
+            else
+            {
+                player2.couleurChoisie = rouge;
+            }
+        }
+        if (couleurChoisie == "B" || couleurChoisie == "Bleu" || couleurChoisie == "bleu")
+        {
+            if (i == 0)
+            {
+                player1.couleurChoisie = bleu;
+            }
+            else
+            {
+                player2.couleurChoisie = bleu;
+            }
+        }
+        if (couleurChoisie == "V" || couleurChoisie == "Vert" || couleurChoisie == "vert")
+        {
+            if (i == 0)
+            {
+                player1.couleurChoisie = vert;
+            }
+            else
+            {
+                player2.couleurChoisie = vert;
+            }
+        }
+        if (couleurChoisie == "C" || couleurChoisie == "Cyan" || couleurChoisie == "cyan")
+        {
+            if (i == 0)
+            {
+                player1.couleurChoisie = cyan;
+            }
+            else
+            {
+                player2.couleurChoisie = cyan;
+            }
+        }
+        if (couleurChoisie == "V" || couleurChoisie == "Violet" || couleurChoisie == "violet")
+        {
+            if (i == 0)
+            {
+                player1.couleurChoisie = violet;
+            }
+            else
+            {
+                player2.couleurChoisie = violet;
+            }
+        }
+    }
 
     // Saisie-vérif de la volonté d'afficher les bateaux
     while (true)
@@ -454,7 +506,7 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur, UnBateau 
 
     // Traitements
     // Saisie-verification avec message d'erreur de la cible du tir par l'utilisisateur
-    while(true)
+    while (true)
     {
         if (player2.nbTirs < 1)
         {
@@ -492,7 +544,7 @@ void nouveauTour(UnJoueur &player1, UnJoueur &player2, int tourJoueur, UnBateau 
             if (action.length() == 2 && colonne > 0 && colonne < 10 && ligne > 0 && ligne < 10)
             {
                 // Vérifier si le tir du joueur touche un bateau
-                verifBateauToucher(tabBateaux, grille, ligne, colonne, nbBateaux, nbCases, tourJoueur, player1, player2);                
+                verifBateauToucher(tabBateaux, grille, ligne, colonne, nbBateaux, nbCases, tourJoueur, player1, player2);
 
                 // Mettre à jour le nombre de tirs du joueur 1
                 if (tourJoueur == 0)
